@@ -1,0 +1,18 @@
+
+
+Coach Creation and Editing:
+
+Ability to create and edit coach profiles.
+Client Creation, Editing, and Deletion:
+
+Coaches can add, edit, and delete clients. The coach manages their own clients.
+Session Creation, Update, and Deletion:
+
+Includes assigning clients to sessions. Coaches can create, update, and delete training sessions, and assign clients to them.
+Screen to View All Clients of a Coach:
+
+Display all clients assigned to a coach, including their training history. Each client should show their last training date.
+Screen to View All Sessions of a Coach:
+
+A view of all sessions scheduled by the coach, resembling a calendar view.(GUI emphasis is not required)
+These translations should provide a clearer understanding of the system's functionalities in managing coaches, clients, and training sessions for a CrossFit coach.

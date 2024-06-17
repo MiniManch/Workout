@@ -1,0 +1,77 @@
+The system is for a single coach, but it can naturally be extended to include additional coaches.
+
+Each coach can only see their own clients.
+Each coach can add clients.
+Each coach can schedule sessions (trainings) for their clients.
+More than one client can participate in a session.
+A session is defined by the combination of a date, start time, duration, coach, and the clients participating.
+ERD Description
+Entities
+Coach
+
+Attributes:
+CoachID (Primary Key)
+Name
+Email
+PhoneNumber
+Client
+
+Attributes:
+ClientID (Primary Key)
+Name
+Email
+PhoneNumber
+CoachID (Foreign Key, references Coach)
+Session
+
+Attributes:
+SessionID (Primary Key)
+Date
+StartTime
+Duration
+CoachID (Foreign Key, references Coach)
+SessionClient (Associative entity to represent the many-to-many relationship between Session and Client)
+
+Attributes:
+SessionClientID (Primary Key)
+SessionID (Foreign Key, references Session)
+ClientID (Foreign Key, references Client)
+Relationships
+A Coach can have many Clients.
+A Client is assigned to one Coach.
+A Coach can schedule many Sessions.
+A Session is conducted by one Coach.
+A Session can include many Clients.
+A Client can participate in many Sessions.
+ERD Diagram (Text Description)
+Coach
+
+CoachID (PK)
+Name
+Email
+PhoneNumber
+Client
+
+ClientID (PK)
+Name
+Email
+PhoneNumber
+CoachID (FK)
+Session
+
+SessionID (PK)
+Date
+StartTime
+Duration
+CoachID (FK)
+SessionClient
+
+SessionClientID (PK)
+SessionID (FK)
+ClientID (FK)
+Relationships
+Coach (1) --- (M) Client
+Coach (1) --- (M) Session
+Session (1) --- (M) SessionClient
+Client (1) --- (M) SessionClient
+

@@ -1,0 +1,35 @@
+Screens and Routes
+Login Screen
+
+Route: /login
+Description: Only for logging into the system.
+Registration Screen
+
+Route: /register
+Description: Screen for new users to register, accessible from the login screen.
+Coach Dashboard
+
+Route: /coach
+Description: Displays coach details and links to various functionalities:
+Clients Screen
+Route: /coach/clients
+Description: Lists all clients of the coach and shows their training history.
+Sessions Screen
+Route: /coach/sessions
+Description: Displays a calendar view of all training sessions scheduled by the coach.
+Create Client Screen
+Route: /coach/clients/create
+Description: Form to create a new client assigned to the coach.
+Create Session Screen
+Route: /coach/sessions/create
+Description: Form to create a new training session assigned to the coach.
+Session Details Screen
+
+Route: /coach/sessions/:sessionId
+Description: Shows details of a specific session, including the list of clients assigned to it.
+Features:
+Ability to remove a client from the session.
+Ability to add a client to the session.
+State Management with PINIA
+Use PINIA to manage the state of the coach (and potentially other relevant data) throughout the application, ensuring it's accessible across screens without passing it through props or route parameters.
+This structure divides the functionality into distinct screens accessible via their respective routes, focusing on user authentication, coach management, client management, session scheduling, and session details management. Using PINIA for state management ensures that data like coach details remains accessible across different parts of the application seamlessly.
