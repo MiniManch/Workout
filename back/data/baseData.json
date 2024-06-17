@@ -1,0 +1,61 @@
+{
+    "coach": [
+      {
+        "CoachID": 1,
+        "Name": "John Doe",
+        "Email": "john.doe@example.com",
+        "PhoneNumber": "1234567890"
+      },
+      {
+        "CoachID": 2,
+        "Name": "Jane Smith",
+        "Email": "jane.smith@example.com",
+        "PhoneNumber": "0987654321"
+      }
+    ],
+    "client": [
+      {
+        "ClientID": 1,
+        "Name": "Alice Johnson",
+        "Email": "alice.johnson@example.com",
+        "PhoneNumber": "5551234567",
+        "CoachID": 1
+      },
+      {
+        "ClientID": 2,
+        "Name": "Bob Brown",
+        "Email": "bob.brown@example.com",
+        "PhoneNumber": "5559876543",
+        "CoachID": 2
+      }
+    ],
+    "session": [
+      {
+        "SessionID": 1,
+        "Date": "2024-06-18",
+        "StartTime": "09:00:00",
+        "Duration": 60,
+        "CoachID": 1
+      },
+      {
+        "SessionID": 2,
+        "Date": "2024-06-18",
+        "StartTime": "10:00:00",
+        "Duration": 60,
+        "CoachID": 2
+      }
+    ],
+    "sessionClient": [
+      {
+        "SessionClientID": 1,
+        "SessionID": 1,
+        "ClientID": 1
+      },
+      {
+        "SessionClientID": 2,
+        "SessionID": 2,
+        "ClientID": 2
+      }
+    ]
+  }
+  
