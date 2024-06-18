@@ -19,6 +19,10 @@ export default {
 
 body{
   font-family: "Ubuntu", sans-serif;
+  background-color: #151515;
+
+  color:#EEEEEE;
+  margin:0;
 }
 
 body,html{
