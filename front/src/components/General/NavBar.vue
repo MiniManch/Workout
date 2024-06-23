@@ -1,11 +1,11 @@
 <template >
     <div class='Navbar'>
-        <a class="navLink" v-if="coach">Username</a>
         <a class="navLink" href="/">Home</a>
+        <a class="navLink" href='/coach_profile' v-if="coach">{{coach.name}}</a>
         
-        <div class="logging">
+        <div class="logging" v-else>
             <a class="navLink" href="/login">Login</a>
-            <a class="navLink" href="#">Signup as a Coach!</a>
+            <a class="navLink" href="/register">Signup as a Coach!</a>
         </div>
     </div>
 </template>
@@ -14,7 +14,7 @@
 export default {
     data(){
         return{
-            coach:localStorage.getItem("coach"),
+            coach:JSON.parse(localStorage.getItem("coach")),
         }
     }
 }
@@ -23,7 +23,7 @@ export default {
 <style scoped>
 .Navbar {
     width: 100vw;
-    height: 5vh;
+    height: 8vh;
     display: flex;
     flex-direction: row;
     justify-content: center;

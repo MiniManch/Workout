@@ -1,6 +1,6 @@
 import pymysql
 import json
-import os 
+import os
 
 # Database connection settings
 db_config = {
@@ -17,7 +17,7 @@ dataFile = os.path.join(os.path.dirname(__file__), 'baseData.json')
 create_table_queries = {
     'Coach': '''
         CREATE TABLE IF NOT EXISTS Coach (
-            CoachID INT PRIMARY KEY,
+            CoachID INT PRIMARY KEY AUTO_INCREMENT,
             Name VARCHAR(100),
             Email VARCHAR(100),
             PhoneNumber VARCHAR(20)
@@ -25,7 +25,7 @@ create_table_queries = {
     ''',
     'Client': '''
         CREATE TABLE IF NOT EXISTS Client (
-            ClientID INT PRIMARY KEY,
+            ClientID INT PRIMARY KEY AUTO_INCREMENT,
             Name VARCHAR(100),
             Email VARCHAR(100),
             PhoneNumber VARCHAR(20),
@@ -35,7 +35,7 @@ create_table_queries = {
     ''',
     'Session': '''
         CREATE TABLE IF NOT EXISTS Session (
-            SessionID INT PRIMARY KEY,
+            SessionID INT PRIMARY KEY AUTO_INCREMENT,
             Date DATE,
             StartTime TIME,
             Duration INT,
@@ -45,7 +45,7 @@ create_table_queries = {
     ''',
     'SessionClient': '''
         CREATE TABLE IF NOT EXISTS SessionClient (
-            SessionClientID INT PRIMARY KEY,
+            SessionClientID INT PRIMARY KEY AUTO_INCREMENT,
             SessionID INT,
             ClientID INT,
             FOREIGN KEY (SessionID) REFERENCES Session(SessionID),
@@ -84,10 +84,9 @@ def insert_data(cursor, table, data):
         cursor.execute(select_query, (entry[list(entry.keys())[0]],))
         result = cursor.fetchone()
         if result:
-            return
+            continue
         else:
             cursor.execute(insert_query, tuple(entry.values()))
-
 
 # Function to setup database
 def setup_database():
@@ -115,5 +114,13 @@ def setup_database():
     connection.close()
     print('Test data inserted successfully.')
 
-if __name__ == '__main__':
-    setup_database()
+# Utility function to get a database connection
+def get_db_connection():
+    connection = pymysql.connect(
+        host=db_config['host'],
+        user=db_config['user'],
+        password=db_config['password'],
+        database=db_config['database'],
+        port=db_config['port']
+    )
+    return connection
