@@ -3,14 +3,14 @@
 Coach Creation and Editing:
 
 Ability to create and edit coach profiles.
+
 Client Creation, Editing, and Deletion:
-
 Coaches can add, edit, and delete clients. The coach manages their own clients.
+
 Session Creation, Update, and Deletion:
-
 Includes assigning clients to sessions. Coaches can create, update, and delete training sessions, and assign clients to them.
-Screen to View All Clients of a Coach:
 
+Screen to View All Clients of a Coach:
 Display all clients assigned to a coach, including their training history. Each client should show their last training date.
 Screen to View All Sessions of a Coach:
 

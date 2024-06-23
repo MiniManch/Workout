@@ -1,72 +1,88 @@
 <template>
-    <div class="containerOfAll">
-        <div class="register-form">
-            <h1>Sign Up as a Coach!</h1>
-            <form @submit.prevent="register">
-              <div>
-                <label for="name">Name:</label>
-                <input type="text" id="name" v-model="name" required>
-              </div>
-              <div>
-                <label for="email">Email:</label>
-                <input type="email" id="email" v-model="email" required>
-              </div>
-              <div>
-                <label for="phone">Phone Number:</label>
-                <input type="tel" id="phone" v-model="phone" required>
-              </div>
-              <button class="btn" type="submit">Register</button>
-            </form>
-            <p v-if="message" :class="messageClass">{{ message }}</p>
-          </div>
+  <div class="containerOfAll">
+    <div class="register-form">
+      <h1>Sign Up as a Coach!</h1>
+      <form @submit.prevent="register">
+        <div>
+          <label for="name">Name:</label>
+          <input type="text" id="name" v-model="name" required>
+        </div>
+        <div>
+          <label for="email">Email:</label>
+          <input type="email" id="email" v-model="email" required>
+        </div>
+        <div>
+          <label for="phone">Phone Number:</label>
+          <input type="tel" id="phone" v-model="phone" required>
+        </div>
+        <button class="btn" type="submit">Register</button>
+      </form>
     </div>
-  </template>
-  
-  <script>
-  export default {
-    data() {
-      return {
-        name: '',
-        email: '',
-        phone: '',
-        message: '',
-        messageClass: ''
-      };
-    },
-    methods: {
-        async register() {
-            try {
-                const response = await fetch(`/api/coach/create`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        name: this.name,
-                        email: this.email,
-                        phone: this.phone
-                    })
-                });
+    <PopUpModal v-if="showModal" :type="modalType" :message="modalMessage" @close="handleModalClose"/>
+  </div>
+</template>
 
-                const data = await response.json();
-                if (response.ok) {
-                    this.message = data.message;
-                    this.messageClass = 'success';
-                } else if (response.status === 409) {
-                    this.message = data.message;
-                    this.messageClass = 'error';
-                } else {
-                    this.message = data.message || 'An error occurred';
-                    this.messageClass = 'error';
-                }
-            } catch (error) {
-                this.message = 'An error occurred: ' + error.message;
-                this.messageClass = 'error';
-            }
+<script>
+import PopUpModal from '@/components/General/PopUpModal.vue';
+
+export default {
+  components: {
+    PopUpModal,
+  },
+  data() {
+    return {
+      name: '',
+      email: '',
+      phone: '',
+      message: '',
+      messageClass: '',
+      showModal: false,
+      modalType: '',
+      modalMessage: '',
+    };
+  },
+  methods: {
+    async register() {
+      try {
+        const response = await fetch(`/api/coach/create`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: this.name,
+            email: this.email,
+            phone: this.phone,
+          }),
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          this.modalMessage = data.message;
+          this.modalType = 'success';
+          this.showModal = true;
+        } else if (response.status === 409) {
+          this.modalMessage = data.message;
+          this.modalType = 'error';
+          this.showModal = true;
+        } else {
+          this.modalMessage = data.message || 'An error occurred';
+          this.modalType = 'error';
+          this.showModal = true;
         }
-    }
-  };
-  </script>
+      } catch (error) {
+        this.modalMessage = 'An error occurred: ' + error.message;
+        this.modalType = 'error';
+        this.showModal = true;
+      }
+    },
+    handleModalClose() {
+      this.showModal = false;
+      this.$router.push({ name: 'CoachProfile' });
+    },
+  },
+};
+</script>
   
   <style scoped>
   .containerOfAll{

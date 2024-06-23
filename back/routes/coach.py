@@ -95,9 +95,16 @@ def update_field(field):
             cursor.execute("SELECT * FROM Coach WHERE LOWER(Name) = LOWER(%s) AND CoachID != %s", (value, coach_id))
             if cursor.fetchone():
                 return jsonify({'message': 'Name already exists'}), 400
+        
+        if field == 'phone':
+            # Check for duplicate phone number (exact match)
+            cursor.execute("SELECT * FROM Coach WHERE PhoneNumber = %s AND CoachID != %s", (value, coach_id))
+            if cursor.fetchone():
+                return jsonify({'message': 'Phone number already exists'}), 400
 
         # Create dynamic SQL query based on the field
-        query = f"UPDATE Coach SET {field.capitalize()} = %s WHERE CoachID = %s"
+        field_name = 'PhoneNumber' if field == 'phone' else field.capitalize()
+        query = f"UPDATE Coach SET {field_name} = %s WHERE CoachID = %s"
         cursor.execute(query, (value, coach_id))
         connection.commit()
         return jsonify({'message': f'{field.capitalize()} updated successfully'}), 200
@@ -107,7 +114,6 @@ def update_field(field):
     finally:
         cursor.close()
         connection.close()
-
 
 # Route to add a client to a coach
 @coach_bp.route('/add-client', methods=['POST'])
