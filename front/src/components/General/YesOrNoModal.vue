@@ -46,6 +46,7 @@
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
+    color: #A91D3A;
 
     z-index: 5;
   }
@@ -62,8 +63,8 @@
   .close {
     position: absolute;
     top: 10px;
-    right: 10px;
-    font-size: 1.5em;
+    left: 10px;
+    font-size: 2em;
     cursor: pointer;
   }
   

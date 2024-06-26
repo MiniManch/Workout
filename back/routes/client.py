@@ -1,19 +1,17 @@
 from flask import Blueprint, request, jsonify
-from data.setup_db import get_db_connection 
+from data.setup_db import get_db_connection
+
 client_bp = Blueprint('client', __name__, url_prefix='/client')
 
 @client_bp.route('/<int:coach_id>/clients', methods=['GET'])
 def get_clients_by_coach(coach_id):
     try:
-        # Get database connection
         db = get_db_connection()
-        # Query clients for the specified coach_id
         query = "SELECT ClientID, Name, Email, PhoneNumber FROM client WHERE CoachID = %s"
         cursor = db.cursor()
         cursor.execute(query, (coach_id,))
         clients = cursor.fetchall()
 
-        # Convert result to list of dictionaries
         clients_list = []
         for client in clients:
             client_dict = {
@@ -36,17 +34,13 @@ def get_clients_by_coach(coach_id):
 @client_bp.route('/update/<int:client_id>', methods=['POST'])
 def update_client(client_id):
     try:
-        # Get database connection
         db = get_db_connection()
-
-        # Fetch client data from request body
         data = request.get_json()
         new_name = data.get('name')
         new_email = data.get('email')
         new_phone = data.get('phone')
 
-        # Update client's information in the database
-        update_query = "UPDATE client SET name = %s, email = %s, phone = %s WHERE id = %s"
+        update_query = "UPDATE client SET Name = %s, Email = %s, PhoneNumber = %s WHERE ClientID = %s"
         cursor = db.cursor()
         cursor.execute(update_query, (new_name, new_email, new_phone, client_id))
         db.commit()
@@ -64,22 +58,17 @@ def update_client(client_id):
 @client_bp.route('/add/<int:coach_id>', methods=['POST'])
 def add_client(coach_id):
     try:
-        # Get database connection
         db = get_db_connection()
-
-        # Fetch client data from request body
         data = request.get_json()
         name = data.get('name')
         email = data.get('email')
         phone = data.get('phone')
 
-        # Insert new client into the database
         insert_query = "INSERT INTO client (Name, Email, PhoneNumber, CoachID) VALUES (%s, %s, %s, %s)"
         cursor = db.cursor()
         cursor.execute(insert_query, (name, email, phone, coach_id))
         db.commit()
 
-        # Get the newly inserted client ID
         new_client_id = cursor.lastrowid
 
         return jsonify({'message': 'Client added successfully', 'client_id': new_client_id}), 201
@@ -90,3 +79,40 @@ def add_client(coach_id):
 
     finally:
         cursor.close()
+        db.close()
+
+@client_bp.route('/delete/<int:coach_id>/<int:client_id>', methods=['DELETE'])
+def delete_client(coach_id, client_id):
+    try:
+        db = get_db_connection()
+
+        # Check if the client belongs to the coach
+        check_query = "SELECT CoachID FROM client WHERE ClientID = %s"
+        cursor = db.cursor()
+        print(f"Executing query: {check_query} with client_id={client_id}")  # Debug print
+        cursor.execute(check_query, (client_id,))
+        result = cursor.fetchone()
+
+        if result is None:
+            return jsonify({'error': 'Client not found'}), 404
+
+        client_coach_id = result[0]
+        if client_coach_id != coach_id:
+            return jsonify({'error': 'Unauthorized to delete this client'}), 403
+
+        # Delete the client if it belongs to the coach
+        delete_query = "DELETE FROM client WHERE ClientID = %s"
+        print(f"Executing delete query: {delete_query} with client_id={client_id}")  # Debug print
+        cursor.execute(delete_query, (client_id,))
+        db.commit()
+
+        return jsonify({'message': 'Client deleted successfully'}), 200
+
+    except Exception as e:
+        db.rollback()
+        print(f"Error occurred: {str(e)}")  # Detailed error logging
+        return jsonify({'error': str(e)}), 500
+
+    finally:
+        cursor.close()
+        db.close()

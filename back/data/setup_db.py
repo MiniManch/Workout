@@ -30,7 +30,7 @@ create_table_queries = {
             Email VARCHAR(100),
             PhoneNumber VARCHAR(20),
             CoachID INT,
-            FOREIGN KEY (CoachID) REFERENCES Coach(CoachID)
+            FOREIGN KEY (CoachID) REFERENCES Coach(CoachID) ON DELETE CASCADE
         )
     ''',
     'Session': '''
@@ -40,7 +40,7 @@ create_table_queries = {
             StartTime TIME,
             Duration INT,
             CoachID INT,
-            FOREIGN KEY (CoachID) REFERENCES Coach(CoachID)
+            FOREIGN KEY (CoachID) REFERENCES Coach(CoachID) ON DELETE CASCADE
         )
     ''',
     'SessionClient': '''
@@ -48,8 +48,8 @@ create_table_queries = {
             SessionClientID INT PRIMARY KEY AUTO_INCREMENT,
             SessionID INT,
             ClientID INT,
-            FOREIGN KEY (SessionID) REFERENCES Session(SessionID),
-            FOREIGN KEY (ClientID) REFERENCES Client(ClientID)
+            FOREIGN KEY (SessionID) REFERENCES Session(SessionID) ON DELETE CASCADE,
+            FOREIGN KEY (ClientID) REFERENCES Client(ClientID) ON DELETE CASCADE
         )
     '''
 }
@@ -66,6 +66,12 @@ def create_database():
     cursor.execute(f"CREATE DATABASE IF NOT EXISTS {db_config['database']}")
     cursor.close()
     connection.close()
+
+# Function to drop tables
+def drop_tables(cursor):
+    for table_name in reversed(create_table_queries.keys()):
+        cursor.execute(f"DROP TABLE IF EXISTS {table_name}")
+        print(f'Table `{table_name}` dropped.')
 
 # Function to create tables
 def create_tables(cursor):
@@ -97,6 +103,10 @@ def setup_database():
     connection = pymysql.connect(**db_config)
     cursor = connection.cursor()
 
+    # # Drop existing tables
+    # drop_tables(cursor)
+    # connection.commit()
+
     # Check and create tables
     create_tables(cursor)
     connection.commit()
@@ -124,3 +134,7 @@ def get_db_connection():
         port=db_config['port']
     )
     return connection
+
+# Run setup_database when script is executed
+if __name__ == "__main__":
+    setup_database()

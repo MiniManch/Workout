@@ -122,7 +122,7 @@ export default {
 
 .close {
   float: right;
-  font-size: 1.5em;
+  font-size: 2em;
   cursor: pointer;
 }
 
