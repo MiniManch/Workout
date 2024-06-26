@@ -1,6 +1,6 @@
 <template lang="">
     <div>
-        homepage
+        homepag
     </div>
 </template>
 <script>
