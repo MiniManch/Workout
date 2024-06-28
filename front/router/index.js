@@ -4,6 +4,10 @@ import CoachLogin from '../src/components/Logging/CoachLogin.vue';
 import CoachSignUp from '../src/components/Logging/CoachSignUp.vue';
 import CoachProfile from '../src/components/Coach/CoachProfile.vue';
 import CreateClient from '@/components/Client/CreateClient.vue';
+import UpdateClient from '@/components/Client/UpdateClient.vue';
+import AddSession from '@/components/Session/AddSession.vue';
+
+
 
 const routes = [
     { path: '/', component: HomePage, name: 'Home' },
@@ -12,6 +16,10 @@ const routes = [
     { path: '/register', component: CoachSignUp, name: 'SignUp' },
     { path: '/coach_profile', component: CoachProfile, name: 'CoachProfile' },
     { path: '/create_client', component: CreateClient, name: 'CreateClient' },
+    { path: '/update/clients/:id', component: UpdateClient, name: 'UpdateClient' },
+    { path: '/create_session', component: AddSession, name: 'AddSession' },
+
+
 ];
 
 const router = createRouter({

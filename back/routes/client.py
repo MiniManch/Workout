@@ -116,3 +116,33 @@ def delete_client(coach_id, client_id):
     finally:
         cursor.close()
         db.close()
+
+@client_bp.route('/get_client/<int:client_id>', methods=['GET'])
+def get_client_by_id(client_id):
+    print(client_id)
+    try:
+        db = get_db_connection()
+        query = "SELECT ClientID, Name, Email, PhoneNumber, CoachID FROM Client WHERE ClientID = %s"
+        cursor = db.cursor()
+        cursor.execute(query, (client_id,))
+        client = cursor.fetchone()
+
+        if client is None:
+            return jsonify({'error': 'Client not found'}), 404
+
+        client_data = {
+            'id': client[0],
+            'name': client[1],
+            'email': client[2],
+            'phone': client[3],
+            'coach_id': client[4]
+        }
+
+        return jsonify({'client': client_data}), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+    finally:
+        cursor.close()
+        db.close()

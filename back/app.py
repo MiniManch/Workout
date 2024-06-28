@@ -2,6 +2,8 @@ from flask import Flask
 import os
 from routes.coach import coach_bp
 from routes.client import client_bp
+from routes.session import session_bp
+
 
 
 # Import the setup_database function from createBaseData
@@ -11,6 +13,8 @@ app = Flask(__name__)
 
 app.register_blueprint(coach_bp)
 app.register_blueprint(client_bp)
+app.register_blueprint(session_bp)
+
 
 @app.route('/')
 def home():

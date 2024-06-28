@@ -14,7 +14,8 @@
           <tr v-for="item in paginatedData" :key="item.id">
             <td v-for="(value, key) in item" :key="key">{{ value }}</td>
             <td>
-              <button class="delete-btn" @click="deleteItem(item.id)">Delete</button>
+              <button class="delete-btn btn" @click="deleteItem(item.id)">Delete</button>
+              <button class="update-btn btn btn-warning" @click="updateItem(item.id)">Update</button>
             </td>
           </tr>
         </tbody>
@@ -47,10 +48,6 @@ export default {
       type: String,
       default: 'Table'
     },
-    type: {
-      type: String,
-      required: true
-    }
   },
   data() {
     return {
@@ -88,7 +85,11 @@ export default {
       this.currentPage = page;
     },
     deleteItem(itemId) {
+      console.log(itemId)
       this.$emit('delete-item', { itemId });
+    },
+    updateItem(itemId) {
+      this.$emit('update-item', { itemId });
     }
   }
 };
@@ -114,8 +115,7 @@ export default {
   background-color: #fff;
   padding: 20px;
   border-radius: 8px;
-  width: 80%;
-  max-width: 600px;
+  width: 50%;
   max-height: 80%;
   overflow-y: auto;
 }
@@ -135,7 +135,7 @@ table {
 th, td {
   padding: 8px 12px;
   border: 1px solid #A91D3A;
-  text-align: left;
+  text-align: center;
 }
 
 th{
@@ -166,6 +166,13 @@ th{
 .delete-btn {
   padding: 5px 10px;
   background-color: #A91D3A;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.update-btn {
+  padding: 5px 10px;
   color: white;
   border: none;
   cursor: pointer;

@@ -39,6 +39,7 @@ create_table_queries = {
             Date DATE,
             StartTime TIME,
             Duration INT,
+            SessionName VARCHAR(100),
             CoachID INT,
             FOREIGN KEY (CoachID) REFERENCES Coach(CoachID) ON DELETE CASCADE
         )
