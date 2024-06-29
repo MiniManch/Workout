@@ -14,8 +14,8 @@
           <tr v-for="item in paginatedData" :key="item.id">
             <td v-for="(value, key) in item" :key="key">{{ value }}</td>
             <td>
-              <button class="delete-btn btn" @click="deleteItem(item.id)">Delete</button>
-              <button class="update-btn btn btn-warning" @click="updateItem(item.id)">Update</button>
+              <button class="delete-btn btn" @click="deleteItem(item)">Delete</button>
+              <button class="update-btn btn btn-warning" @click="updateItem(item)">Update</button>
             </td>
           </tr>
         </tbody>
@@ -47,6 +47,9 @@ export default {
     title: {
       type: String,
       default: 'Table'
+    },
+    type: {
+      type: String,
     },
   },
   data() {
@@ -84,11 +87,28 @@ export default {
     goToPage(page) {
       this.currentPage = page;
     },
-    deleteItem(itemId) {
-      console.log(itemId)
+    deleteItem(item) {
+      let itemId;
+
+      if(!item.id && this.type === 'session'){
+        itemId= item.SessionID;
+      }
+      else{
+        itemId = item.id;
+      }
+
       this.$emit('delete-item', { itemId });
     },
-    updateItem(itemId) {
+    updateItem(item) {
+      let itemId;
+
+      if(!item.id && this.type === 'session'){
+        itemId= item.SessionID;
+      }
+      else{
+        itemId = item.id;
+      }
+
       this.$emit('update-item', { itemId });
     }
   }

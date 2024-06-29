@@ -3,27 +3,17 @@
     <div class="coachProfile">
       <h1>Your Profile!</h1>
       <form @submit.prevent="">
-        <div class="inputDiv">
-          <label for="name">Name:</label>
-          <input type="text" id="name" v-model="name" required>
-          <button class="btn" @click="updateField('name')">Update Name</button>
-        </div>
-        <div class="inputDiv">
-          <label for="email">Email:</label>
-          <input type="email" id="email" v-model="email" required>
-          <button class="btn" @click="updateField('email')">Update Email</button>
-        </div>
-        <div class="inputDiv">
-          <label for="phone">Phone Number:</label>
-          <input type="tel" id="phone" v-model="phone" required>
-          <button class="btn" @click="updateField('phone')">Update Phone</button>
+        <div v-for="field in fields" :key="field.id" class="inputDiv">
+          <label :for="field.id">{{ field.label }}:</label>
+          <input :type="field.type" :id="field.id" v-model="field.value" required>
+          <button class="btn" @click="updateField(field.id)">Update {{ field.label }}</button>
         </div>
       </form>
     </div>
 
     <div class="actions">
-      <button class="btn" @click="fetchClients">Your Clients</button>
-      <button class="btn" @click="fetchSessions">Your Sessions</button>
+      <button class="btn" @click="fetchData('client')">Your Clients</button>
+      <button class="btn" @click="fetchData('session')">Your Sessions</button>
       <button class="btn"><a href="/create_client">Add new client!</a></button>
       <button class="btn"><a href="/create_session">Create Session!</a></button>
     </div>
@@ -39,6 +29,7 @@
       :data="tableData"
       :itemsPerPage="5"
       :title="tableTitle"
+      :type="typeOfData"
       @close="closeTable"
       @delete-item="confirmAction"       
       @update-item="handleUpdate"
@@ -58,18 +49,18 @@ export default {
     YesOrNoModal
   },
   data() {
+    const coach = JSON.parse(localStorage.getItem('coach')) || {};
     return {
-      coach: JSON.parse(localStorage.getItem('coach')),
-      name: null,
-      email: null,
-      phone: null,
+      coach,
+      fields: [
+        { id: 'name', label: 'Name', type: 'text', value: coach.name || '' },
+        { id: 'email', label: 'Email', type: 'email', value: coach.email || '' },
+        { id: 'phone', label: 'Phone Number', type: 'tel', value: coach.phone || '' },
+      ],
       tableData: [],
       typeOfData: null,
-      message: '',
-      messageClass: '',
       showModal: false,
       showYesNoModal: false,
-      modalTitle: '',
       modalMessage: '',
       modalType: '',
       showTable: false,
@@ -78,73 +69,40 @@ export default {
     };
   },
   mounted() {
-    if (!this.coach) {
+    if (!this.coach.id) {
       this.$router.push({ name: 'Login' });
-    } else {
-      this.name = this.coach.name;
-      this.email = this.coach.email;
-      this.phone = this.coach.phone;
     }
   },
   methods: {
-    async fetchClients() {
+    async fetchData(type) {
       try {
-        const response = await fetch(`/api/client/${this.coach.id}/clients`, {
+        const response = await fetch(`/api/${type === 'client' ? 'client' : 'session'}/get_coach_${type}_data/${this.coach.id}`, {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' }
         });
 
-        if (response.ok) {
-          const data = await response.json();
-          this.tableData = data.clients;
-          this.typeOfData = 'client';
-          this.tableTitle = 'Your Clients';
-          this.showTable = true;
-        } else {
-          throw new Error('Failed to fetch clients');
-        }
-      } catch (error) {
-        console.error('Error fetching clients:', error.message);
-        this.modalType = 'error';
-        this.modalMessage = 'Error fetching clients: ' + error.message;
-        this.showModal = true;
-      }
-    },
-    async fetchSessions() {
-      try {
-        const response = await fetch(`/api/session/get_coach_sessions/${this.coach.id}`, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' }
-        });
+        if (!response.ok) throw new Error(`Failed to fetch ${type}s`);
 
-        if (response.ok) {
-          const data = await response.json();
-          this.tableData = data.sessions;
-          this.typeOfData = 'session';
-          this.tableTitle = 'Your Sessions';
-          this.showTable = true;
-        } else {
-          throw new Error('Failed to fetch sessions');
-        }
+        const data = await response.json();
+        this.tableData = type === 'client' ? data.clients : data.sessions;
+        this.typeOfData = type;
+        this.tableTitle = `Your ${type[0].toUpperCase() + type.slice(1)}s`;
+        this.showTable = true;
       } catch (error) {
-        console.error('Error fetching sessions:', error.message);
         this.modalType = 'error';
-        this.modalMessage = 'Error fetching sessions: ' + error.message;
+        this.modalMessage = `Error fetching ${type}s: ${error.message}`;
         this.showModal = true;
       }
     },
     async updateField(field) {
-      const newValue = this[field];
-      const currentValue = this.coach[field];
+      const fieldValue = this.fields.find(f => f.id === field).value;
 
-      if (newValue === currentValue) {
+      if (fieldValue === this.coach[field]) {
         this.modalType = 'error';
-        this.modalMessage = `You didn't change anything for ${field}. No update performed.`;
+        this.modalMessage = `No change in ${field}. Update not performed.`;
         this.showModal = true;
         return;
       }
-
-      const payload = { value: newValue };
 
       try {
         const response = await fetch(`/api/coach/update/${field}`, {
@@ -153,24 +111,20 @@ export default {
             'Content-Type': 'application/json',
             'CoachID': this.coach.id
           },
-          body: JSON.stringify(payload)
+          body: JSON.stringify({ value: fieldValue })
         });
 
         const data = await response.json();
+        this.modalType = response.ok ? 'success' : 'error';
+        this.modalMessage = data.message || 'An error occurred';
         if (response.ok) {
-          this.modalType = 'success';
-          this.modalMessage = data.message;
-          this.coach[field] = newValue;
+          this.coach[field] = fieldValue;
           localStorage.setItem('coach', JSON.stringify(this.coach));
-          this.showModal = true;
-        } else {
-          this.modalType = 'error';
-          this.modalMessage = data.message || 'An error occurred';
-          this.showModal = true;
         }
+        this.showModal = true;
       } catch (error) {
         this.modalType = 'error';
-        this.modalMessage = 'An error occurred: ' + error.message;
+        this.modalMessage = `An error occurred: ${error.message}`;
         this.showModal = true;
       }
     },
@@ -182,11 +136,11 @@ export default {
       await this.deleteItem({ itemId: this.itemToDelete });
       this.showYesNoModal = false;
       this.itemToDelete = null;
-      this.modalMessage = `${this.typeOfData[0].toUpperCase() + this.typeOfData[1]} was deleted.`
+      this.modalMessage = `${this.typeOfData[0].toUpperCase() + this.typeOfData.slice(1)} was deleted.`;
       this.modalType = 'success';
       this.showModal = true;
     },
-    async deleteItem({ itemId}) {
+    async deleteItem({ itemId }) {
       try {
         const response = await fetch(`/api/${this.typeOfData}/delete/${this.coach.id}/${itemId}`, {
           method: 'DELETE',
@@ -194,19 +148,16 @@ export default {
         });
 
         const data = await response.json();
+        this.modalType = response.ok ? 'success' : 'error';
+        this.modalMessage = data.message || `Failed to delete ${this.typeOfData}`;
         if (response.ok) {
-          this.modalMessage = data.message;
-          this.modalType = 'success';
-          this.showModal = true;
           this.tableData = this.tableData.filter(item => item.id !== itemId);
-        } else {
-          this.modalMessage = data.message || `Failed to delete ${this.typeOfData}`;
-          this.modalType = 'error';
-          this.showModal = true;
+          this.fetchData(this.typeOfData); // Re-fetch data after successful deletion
         }
+        this.showModal = true;
       } catch (error) {
-        this.modalMessage = 'An error occurred: ' + error.message;
         this.modalType = 'error';
+        this.modalMessage = `An error occurred: ${error.message}`;
         this.showModal = true;
       }
     },
@@ -215,13 +166,13 @@ export default {
       this.itemToDelete = null;
     },
     handleModalClose() {
+      this.showModal = false;
       this.modalMessage = '';
       this.modalType = '';
-      this.showModal = false;
     },
     closeTable() {
       this.showTable = false;
-      this.tableData = null;
+      this.tableData = [];
       this.typeOfData = null;
       this.tableTitle = '';
     },
@@ -231,7 +182,7 @@ export default {
   }
 };
 </script>
-  
+
 <style scoped>
 .containerOfAll {
   width: 100%;

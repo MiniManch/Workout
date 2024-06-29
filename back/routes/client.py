@@ -3,7 +3,7 @@ from data.setup_db import get_db_connection
 
 client_bp = Blueprint('client', __name__, url_prefix='/client')
 
-@client_bp.route('/<int:coach_id>/clients', methods=['GET'])
+@client_bp.route('/get_coach_client_data/<int:coach_id>', methods=['GET'])
 def get_clients_by_coach(coach_id):
     try:
         db = get_db_connection()

@@ -84,7 +84,6 @@
             this.message = data.message;
             this.modalType = 'success';
             this.showModal = true;
-            // Optionally reset the form fields after successful submission
             this.newSession.name = '';
             this.newSession.date = '';
             this.newSession.time = '';
@@ -103,7 +102,7 @@
       },
       async fetchClients() {
         try {
-          const response = await fetch(`/api/client/${this.coach.id}/clients`, {
+          const response = await fetch(`/api/client/get_coach_client_data/${this.coach.id}`, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' }
           });

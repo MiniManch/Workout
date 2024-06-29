@@ -6,7 +6,7 @@ from datetime import timedelta
 
 session_bp = Blueprint('session', __name__, url_prefix='/session')
 
-@session_bp.route('/get_coach_sessions/<int:coach_id>', methods=['GET'])
+@session_bp.route('/get_coach_session_data/<int:coach_id>', methods=['GET'])
 def get_sessions_by_coach(coach_id):
     try:
         db = get_db_connection()
@@ -39,30 +39,6 @@ def get_sessions_by_coach(coach_id):
     except Exception as e:
         print(f"Error occurred: {str(e)}")  # Detailed error logging
         return json.dumps({'error': str(e)}, indent=4, sort_keys=True, default=str), 500
-
-
-@session_bp.route('/update/<int:session_id>', methods=['POST'])
-def update_session(session_id):
-    try:
-        db = get_db_connection()
-        cursor = db.cursor()
-        data = request.get_json()
-        new_name = data.get('name')
-        new_date = data.get('date')
-        new_time = data.get('time')
-
-        update_query = "UPDATE Session SET SessionName = %s, Date = %s, Time = %s WHERE SessionID = %s"
-        cursor.execute(update_query, (new_name, new_date, new_time, session_id))
-        db.commit()
-        return json.dumps({'message': 'Session updated successfully'}, indent=4, sort_keys=True, default=str), 200
-
-    except Exception as e:
-        db.rollback()
-        return json.dumps({'error': str(e)}, indent=4, sort_keys=True, default=str), 500
-
-    finally:
-        cursor.close()
-        db.close()
 
 @session_bp.route('/add/<int:coach_id>', methods=['POST'])
 def add_session(coach_id):
@@ -98,7 +74,39 @@ def add_session(coach_id):
         cursor.close()
         db.close()
 
+@session_bp.route('/update/<int:session_id>', methods=['POST'])
+def update_session(session_id):
+    try:
+        db = get_db_connection()
+        cursor = db.cursor()
+        data = request.get_json()
+        new_name = data.get('SessionName')
+        new_date = data.get('Date')
+        new_time = data.get('StartTime')
+        new_duration = data.get('Duration')
+        new_client_id = data.get('ClientID')  # New client ID to update
 
+        # Update Session table
+        update_session_query = "UPDATE Session SET SessionName = %s, Date = %s, StartTime = %s, Duration = %s WHERE SessionID = %s"
+        cursor.execute(update_session_query, (new_name, new_date, new_time, new_duration, session_id))
+
+        # Update SessionClient table
+        update_client_query = "UPDATE SessionClient SET ClientID = %s WHERE SessionID = %s"
+        cursor.execute(update_client_query, (new_client_id, session_id))
+
+        db.commit()
+        return json.dumps({'message': 'Session updated successfully'}, indent=4, sort_keys=True, default=str), 200
+
+    except Exception as e:
+        db.rollback()
+        print(str(e))
+        return json.dumps({'error': str(e)}, indent=4, sort_keys=True, default=str), 500
+
+    finally:
+        cursor.close()
+        db.close()
+
+        
 @session_bp.route('/delete/<int:coach_id>/<int:session_id>', methods=['DELETE'])
 def delete_session(coach_id, session_id):
     try:
@@ -131,21 +139,30 @@ def delete_session(coach_id, session_id):
         cursor.close()
         db.close()
 
-@session_bp.route('/get_session/<int:session_id>', methods=['GET'])
-def get_session_by_id(session_id):
+@session_bp.route('/get_session/<int:session_id>/<int:coach_id>', methods=['GET'])
+def get_session_by_id(session_id, coach_id):
     try:
         db = get_db_connection()
         cursor = db.cursor(pymysql.cursors.DictCursor)
-        query = "SELECT SessionID, SessionName, Date, Time, CoachID, ClientID FROM Session WHERE SessionID = %s"
-        cursor.execute(query, (session_id,))
+        
+        # Query to fetch session details by session ID and coach ID
+        query = """
+            SELECT s.SessionID, s.SessionName, s.Date, s.StartTime, s.CoachID,s.Duration, sc.ClientID
+            FROM Session AS s
+            LEFT JOIN SessionClient AS sc ON s.SessionID = sc.SessionID
+            WHERE s.SessionID = %s AND s.CoachID = %s
+        """
+        
+        cursor.execute(query, (session_id, coach_id))
         session = cursor.fetchone()
 
         if session is None:
-            return json.dumps({'error': 'Session not found'}, indent=4, sort_keys=True, default=str), 404
+            return json.dumps({'error': 'Session not found for this coach'}, indent=4, sort_keys=True, default=str), 404
 
         return json.dumps({'session': session}, indent=4, sort_keys=True, default=str), 200
 
     except Exception as e:
+        print(f"Error occurred: {str(e)}")
         return json.dumps({'error': str(e)}, indent=4, sort_keys=True, default=str), 500
 
     finally:
