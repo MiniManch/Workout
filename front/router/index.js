@@ -7,6 +7,7 @@ import CreateClient from '@/components/Client/CreateClient.vue';
 import UpdateClient from '@/components/Client/UpdateClient.vue';
 import AddSession from '@/components/Session/AddSession.vue';
 import UpdateSession from '@/components/Session/UpdateSession.vue';
+import SessionCalendar from '@/components/Session/SessionCalendar.vue';
 
 
 
@@ -21,9 +22,7 @@ const routes = [
     { path: '/update/client/:id', component: UpdateClient, name: 'UpdateClient' },
     { path: '/create_session', component: AddSession, name: 'AddSession' },
     { path: '/update/session/:id', component: UpdateSession, name: 'UpdateSession' },
-
-
-
+    { path: '/session_calendar', component: SessionCalendar, name: 'Session Calnedar' },
 ];
 
 const router = createRouter({

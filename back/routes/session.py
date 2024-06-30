@@ -106,7 +106,7 @@ def update_session(session_id):
         cursor.close()
         db.close()
 
-        
+
 @session_bp.route('/delete/<int:coach_id>/<int:session_id>', methods=['DELETE'])
 def delete_session(coach_id, session_id):
     try:
@@ -138,6 +138,7 @@ def delete_session(coach_id, session_id):
     finally:
         cursor.close()
         db.close()
+
 
 @session_bp.route('/get_session/<int:session_id>/<int:coach_id>', methods=['GET'])
 def get_session_by_id(session_id, coach_id):
