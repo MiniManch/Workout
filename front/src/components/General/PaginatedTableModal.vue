@@ -6,12 +6,12 @@
       <table>
         <thead>
           <tr>
-            <th v-for="header in headers" :key="header">{{ header }}</th>
+            <th v-for="header in filteredHeaders" :key="header" :class="header">{{ header }}</th>
             <th>Action</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="item in paginatedData" :key="item.id">
+          <tr v-for="item in filteredPaginatedData" :key="item.id">
             <td v-for="(value, key) in item" :key="key">{{ value }}</td>
             <td>
               <button class="delete-btn btn" @click="deleteItem(item)">Delete</button>
@@ -61,6 +61,9 @@ export default {
     headers() {
       return this.data.length > 0 ? Object.keys(this.data[0]) : [];
     },
+    filteredHeaders() {
+      return this.headers.filter(header => !this.isIdField(header));
+    },
     totalPages() {
       return Math.ceil(this.data.length / this.itemsPerPage);
     },
@@ -68,6 +71,18 @@ export default {
       const start = (this.currentPage - 1) * this.itemsPerPage;
       const end = start + this.itemsPerPage;
       return this.data.slice(start, end);
+    },
+    filteredPaginatedData() {
+      console.log(this.data)
+      return this.paginatedData.map(item => {
+        const newItem = {};
+        for (const key in item) {
+          if (!this.isIdField(key)) {
+            newItem[key] = item[key];
+          }
+        }
+        return newItem;
+      });
     }
   },
   methods: {
@@ -88,28 +103,27 @@ export default {
       this.currentPage = page;
     },
     deleteItem(item) {
-      let itemId;
-
-      if(!item.id && this.type === 'session'){
-        itemId= item.SessionID;
-      }
-      else{
-        itemId = item.id;
+      let itemId = item.id; 
+      if (this.type === 'session' && item.SessionID) {
+        itemId = item.SessionID; 
       }
 
       this.$emit('delete-item', { itemId });
     },
+
     updateItem(item) {
       let itemId;
 
-      if(!item.id && this.type === 'session'){
-        itemId= item.SessionID;
-      }
-      else{
+      if (!item.id && this.type === 'session') {
+        itemId = item.SessionID;
+      } else {
         itemId = item.id;
       }
 
       this.$emit('update-item', { itemId });
+    },
+    isIdField(key) {
+      return key.toLowerCase() === 'id' || key.toLowerCase().endsWith('id');
     }
   }
 };
@@ -129,7 +143,6 @@ export default {
   color: #A91D3A;
   z-index: 2;
 }
-
 
 .modal-content {
   background-color: #fff;
@@ -158,9 +171,9 @@ th, td {
   text-align: center;
 }
 
-th{
+th {
   background-color: #A91D3A;
-  color:white;
+  color: white;
 }
 
 .pagination {
@@ -170,7 +183,7 @@ th{
   align-items: center;
 }
 
- button {
+button {
   margin: 0 5px;
   padding: 5px 10px;
   cursor: pointer;
@@ -178,7 +191,7 @@ th{
   border: 1px solid #A91D3A;
 }
 
- button.active {
+button.active {
   font-weight: bold;
   text-decoration: underline;
 }
