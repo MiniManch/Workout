@@ -12,10 +12,10 @@
     </div>
 
     <div class="actions">
-      <button class="btn" @click="fetchData('client')">Your Clients</button>
-      <button class="btn" @click="fetchData('session')">Your Sessions</button>
-      <button class="btn"><a href="/create_client">Add new client!</a></button>
-      <button class="btn"><a href="/create_session">Create Session!</a></button>
+      <button class="btn" @click="fetchData('client')"><img src="/icons/team-50.png" alt="">Your Clients</button>
+      <button class="btn" @click="fetchData('session')"><img src="/icons/schedule-60.png" alt=""> Your Sessions</button>
+      <button class="btn"><a href="/create_client"><img src="/icons/trainee-50.png" alt=""> Add new client!</a></button>
+      <button class="btn"><a href="/create_session"><img src="/icons/workout-50.png" alt="">  Create Session! </a></button>
     </div>
 
     <!-- Pop-up modal for general messages -->
@@ -268,5 +268,12 @@ button {
 button:hover {
   background-color: white;
   color: #A91D3A;
+}
+
+button > img{
+  margin-right:1vw;
+}
+button > a > img{
+  margin-right:1vw;
 }
 </style>

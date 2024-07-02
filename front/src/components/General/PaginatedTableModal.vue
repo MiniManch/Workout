@@ -12,10 +12,10 @@
         </thead>
         <tbody>
           <tr v-for="item in filteredPaginatedData" :key="item.id">
-            <td v-for="(value, key) in item" :key="key">{{ value }}</td>
+            <td v-for="(value, key) in item" :key="key" :class="{ hidden: isIdField(key) }">{{ value }}</td>
             <td>
               <button class="delete-btn btn" @click="deleteItem(item)">Delete</button>
-              <button class="update-btn btn btn-warning" @click="updateItem(item)">Update</button>
+              <button class="update-btn btn btn-warning" @click="updateItem(item)">{{updateText}}</button>
             </td>
           </tr>
         </tbody>
@@ -25,6 +25,7 @@
         <button class="btn" v-for="page in totalPages" :key="page" @click="goToPage(page)" :class="{ active: currentPage === page }">{{ page }}</button>
         <button class="btn" @click="nextPage" :disabled="currentPage === totalPages">Next</button>
       </div>
+      <button v-if='type=="session" ' class="calendarBtn btn btn-success" @click="openCalendar"><a href="/session_calendar"><img src="icons/calendar-50.png" alt=""></a></button>
     </div>
   </div>
 </template>
@@ -73,16 +74,13 @@ export default {
       return this.data.slice(start, end);
     },
     filteredPaginatedData() {
-      console.log(this.data)
       return this.paginatedData.map(item => {
-        const newItem = {};
-        for (const key in item) {
-          if (!this.isIdField(key)) {
-            newItem[key] = item[key];
-          }
-        }
+        const newItem = { ...item };
         return newItem;
       });
+    },
+    updateText(){
+      return this.type === 'client' ? 'Profile' : 'Update';
     }
   },
   methods: {
@@ -103,27 +101,26 @@ export default {
       this.currentPage = page;
     },
     deleteItem(item) {
-      let itemId = item.id; 
-      if (this.type === 'session' && item.SessionID) {
-        itemId = item.SessionID; 
-      }
-
+      const itemId = this.getItemId(item);
       this.$emit('delete-item', { itemId });
     },
 
     updateItem(item) {
-      let itemId;
-
-      if (!item.id && this.type === 'session') {
-        itemId = item.SessionID;
-      } else {
-        itemId = item.id;
-      }
-
+      const itemId = this.getItemId(item);
       this.$emit('update-item', { itemId });
+    },
+    getItemId(item) {
+      if (this.type === 'session' && item.SessionID) {
+        return item.SessionID;
+      }
+      return item.id;
     },
     isIdField(key) {
       return key.toLowerCase() === 'id' || key.toLowerCase().endsWith('id');
+    },
+    clientSchedule(item){
+      const itemId = this.getItemId(item);
+      this.$emit('openSchedule', { itemId });
     }
   }
 };
@@ -151,12 +148,18 @@ export default {
   width: 50%;
   max-height: 80%;
   overflow-y: auto;
+
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .close {
   float: right;
   font-size: 2em;
   cursor: pointer;
+  align-self: flex-start;
 }
 
 table {
@@ -174,6 +177,10 @@ th, td {
 th {
   background-color: #A91D3A;
   color: white;
+}
+
+td.hidden {
+  display: none;
 }
 
 .pagination {
@@ -209,5 +216,11 @@ button.active {
   color: white;
   border: none;
   cursor: pointer;
+}
+
+.calendarBtn{
+  margin-top:3vh;
+  border:none;
+  width:fit-content;
 }
 </style>

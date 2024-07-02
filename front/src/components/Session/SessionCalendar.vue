@@ -70,6 +70,9 @@ export default {
       showTable: false,
       tableData: [],
       tableTitle: '',
+      showYesNoModal: false,
+      itemToDelete: null,
+      typeOfData: '',
     };
   },
   computed: {
@@ -157,7 +160,7 @@ export default {
       if (day.appointments.length > 0) {
         this.tableData = day.appointments;
         this.tableTitle = `Appointments on ${day.date.toLocaleDateString()}`;
-        this.typeOfData = 'appointments';
+        this.typeOfData = 'session';
         this.showTable = true;
       }
     },
@@ -173,6 +176,8 @@ export default {
     },
     async performAction() {
       await this.deleteItem({ itemId: this.itemToDelete });
+      await this.fetchAppointments(); // Refresh the appointments list
+      this.refreshTableData();
       this.showYesNoModal = false;
       this.itemToDelete = null;
       this.modalMessage = `Appointment was deleted.`;
@@ -198,6 +203,11 @@ export default {
         this.modalMessage = `An error occurred: ${error.message}`;
         this.showModal = true;
       }
+    },
+    refreshTableData() {
+      const selectedDay = this.tableTitle.split('Appointments on ')[1];
+      const dayDate = new Date(selectedDay);
+      this.tableData = this.getAppointmentsForDay(dayDate);
     },
     handleUpdate(data) {
       this.$router.push(`/update/${this.typeOfData}/${data.itemId}`);

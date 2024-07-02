@@ -169,3 +169,41 @@ def get_session_by_id(session_id, coach_id):
     finally:
         cursor.close()
         db.close()
+
+@session_bp.route('/get_client_sessions/<int:client_id>', methods=['GET'])
+def get_client_sessions(client_id):
+    try:
+        db = get_db_connection()
+        cursor = db.cursor()
+
+        query = """
+            SELECT s.SessionID, s.SessionName, s.Date, s.StartTime, s.CoachID, s.Duration, sc.ClientID
+            FROM Session AS s
+            LEFT JOIN SessionClient AS sc ON s.SessionID = sc.SessionID
+            WHERE sc.ClientID = %s
+        """
+        cursor.execute(query, (client_id,))
+        sessions = cursor.fetchall()
+
+        sessions_list = []
+        for session in sessions:
+            session_dict = {
+                'id': session[0],
+                'SessionName': session[1],
+                'Date': session[2],
+                'StartTime': session[3],
+                'CoachID': session[4],
+                'Duration': session[5],
+                'ClientID': session[6]
+            }
+            sessions_list.append(session_dict)
+
+        return json.dumps({'sessions': sessions_list}, indent=4, sort_keys=True, default=str), 200
+
+    except Exception as e:
+        print(str(e))
+        return json.dumps({'error': str(e)}, indent=4, sort_keys=True, default=str), 500
+
+    finally:
+        cursor.close()
+        db.close()
