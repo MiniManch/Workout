@@ -77,12 +77,12 @@ export default {
   },
   computed: {
     currentMonthYear() {
-      const options = {
-        year: 'numeric',
-        month: 'long'
-      };
-      return this.currentDate.toLocaleDateString(undefined, options);
-    },
+    const options = {
+      year: 'numeric',
+      month: 'long'
+    };
+    return this.currentDate.toLocaleDateString('en-US', options);
+  },
     days() {
       const start = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth(), 1);
       const end = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth() + 1, 0);
@@ -156,10 +156,10 @@ export default {
                appointmentDate.getDate() === date.getDate();
       });
     },
-    openTable(day) {
+      openTable(day) {
       if (day.appointments.length > 0) {
         this.tableData = day.appointments;
-        this.tableTitle = `Appointments on ${day.date.toLocaleDateString()}`;
+        this.tableTitle = `Appointments on ${day.date.toLocaleDateString('en-US')}`; // Set the locale to English (United States)
         this.typeOfData = 'session';
         this.showTable = true;
       }
@@ -222,6 +222,9 @@ export default {
 
 
 <style scoped>
+*{
+  user-select: none;
+}
 .containerOfAll {
   width: 100%;
   height: 80%;

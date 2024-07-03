@@ -76,7 +76,7 @@ export default {
   methods: {
     async fetchData(type) {
       try {
-        const response = await fetch(`/api/${type === 'client' ? 'client' : 'session'}/get_coach_${type}_data/${this.coach.id}`, {
+        const response = await fetch(`/api/${type}/get_coach_${type}_data/${this.coach.id}`, {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' }
         });

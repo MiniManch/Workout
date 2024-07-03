@@ -25,7 +25,9 @@
         <button class="btn" v-for="page in totalPages" :key="page" @click="goToPage(page)" :class="{ active: currentPage === page }">{{ page }}</button>
         <button class="btn" @click="nextPage" :disabled="currentPage === totalPages">Next</button>
       </div>
-      <button v-if='type=="session" ' class="calendarBtn btn btn-success" @click="openCalendar"><a href="/session_calendar"><img src="icons/calendar-50.png" alt=""></a></button>
+      <button v-if='type=="session" && !checkIfOpenedByClanedar(title) ' class="calendarBtn btn btn-success" @click="openCalendar">
+        <a href="/session_calendar"><img src="icons/calendar-50.png" alt=""></a>
+      </button>
     </div>
   </div>
 </template>
@@ -121,6 +123,11 @@ export default {
     clientSchedule(item){
       const itemId = this.getItemId(item);
       this.$emit('openSchedule', { itemId });
+    },
+    checkIfOpenedByClanedar(string){
+      const substring = "Appointments";
+      console.log(string)
+      return string.includes(substring);
     }
   }
 };
