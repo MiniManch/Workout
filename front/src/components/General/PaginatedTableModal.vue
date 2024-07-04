@@ -145,7 +145,7 @@ export default {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   color: #A91D3A;
-  z-index: 2;
+  z-index: 5;
 }
 
 .modal-content {

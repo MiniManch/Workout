@@ -1,14 +1,20 @@
-<template>
+  <template>
+    <img src="/images/background.jpg" alt="" class="backgroundImage">
+    <div class="overlay"></div>
   <NavBar />
+  <CoachActions />
   <router-view></router-view>
 </template>
 
 <script>
-import NavBar from './components/General/NavBar.vue'
+import NavBar from './components/General/NavBar.vue';
+import CoachActions from './components/Coach/CoachActions.vue';
+
 export default {
   name: 'App',
   components: {
-    NavBar
+    NavBar,
+    CoachActions
   }
 }
 </script>
@@ -20,6 +26,8 @@ export default {
 body{
   font-family: "Ubuntu", sans-serif;
   background-color: #151515;
+  overflow-x: hidden;
+
 
   color:#EEEEEE;
   margin:0;
@@ -28,6 +36,23 @@ body{
 body,html{
   width:100%;
   height:100%;
+}
+
+.backgroundImage{
+  position:absolute;
+  top:0;
+  left:0;
+  z-index: -3;
+  height:100vh;
+  width:100vw;
+}
+
+.overlay{
+  position: absolute;
+  width:100vw;
+  height:100vh;
+  background-color: rgba(0,0,0,0.5);
+  z-index: -2;
 }
 
 #app{

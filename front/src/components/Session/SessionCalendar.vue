@@ -228,7 +228,7 @@ export default {
 .containerOfAll {
   width: 100%;
   height: 80%;
-  margin-top: 5vh;
+  padding-top: 10vh;
   display: flex;
   justify-content: center;
   align-items: flex-start;
