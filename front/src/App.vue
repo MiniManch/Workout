@@ -1,6 +1,5 @@
   <template>
-    <img src="/images/background.jpg" alt="" class="backgroundImage">
-    <div class="overlay"></div>
+  <BackgroundImage v-if="!isHomePage"/>
   <NavBar />
   <CoachActions />
   <router-view></router-view>
@@ -8,13 +7,20 @@
 
 <script>
 import NavBar from './components/General/NavBar.vue';
+import BackgroundImage from "@/components/General/BackgroundImage.vue";
 import CoachActions from './components/Coach/CoachActions.vue';
 
 export default {
   name: 'App',
+  computed:{
+    isHomePage(){
+      return this.$route.path === '/';
+    }
+  },
   components: {
     NavBar,
-    CoachActions
+    CoachActions,
+    BackgroundImage
   }
 }
 </script>
@@ -36,23 +42,6 @@ body{
 body,html{
   width:100%;
   height:100%;
-}
-
-.backgroundImage{
-  position:absolute;
-  top:0;
-  left:0;
-  z-index: -3;
-  height:100vh;
-  width:100vw;
-}
-
-.overlay{
-  position: absolute;
-  width:100vw;
-  height:100vh;
-  background-color: rgba(0,0,0,0.5);
-  z-index: -2;
 }
 
 #app{

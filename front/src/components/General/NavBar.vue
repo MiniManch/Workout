@@ -2,11 +2,11 @@
     <div class="NavbarWrapper">
       <nav class="Navbar">
         <ul>
-          <li><a class="navLink" href="/">Home</a></li>
-          <li v-if="coach"><a class="navLink" href="/coach_profile">{{ coach.name }}</a></li>
+          <li><div class="navLink" @click="goTo('/')">Home</div></li>
+          <li v-if="coach"><div class="navLink" @click="goTo('/coach_profile')">{{ coach.name }}</div></li>
           <template  v-else>
-            <li><a class="navLink" href="/login">Login</a></li>
-            <li><a class="navLink" href="/register">Signup as a Coach!</a></li>
+            <li><div class="navLink" @click="goTo('login')">Login</div></li>
+            <li><div class="navLink" @click="goTo('register')">Signup as a Coach!</div></li>
           </template>
         </ul>
       </nav>
@@ -20,6 +20,11 @@
         coach: JSON.parse(localStorage.getItem("coach")),
       };
     },
+    methods:{
+      goTo(link){
+        this.$router.push(link);
+      },
+    }
   };
   </script>
   
@@ -35,7 +40,7 @@
     justify-content: center;
     align-items: center;
     
-    z-index: 2;
+    z-index: 3;
   }
   
   .Navbar {
@@ -62,7 +67,7 @@
     display: inline-block;
   }
   
-  .Navbar ul li a {
+  .Navbar ul li div {
     padding: 18px;
     font-family: "Open Sans", sans-serif;
     text-transform: uppercase;
@@ -71,10 +76,12 @@
     text-decoration: none;
     display: block;
 
+    cursor:pointer;
+
     transition: all 0.4s;
   }
   
-  .Navbar ul li a:hover {
+  .Navbar ul li div:hover {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1), inset 0 0 1px rgba(255, 255, 255, 0.6);
     background: rgba(255, 255, 255, 0.1);
     color: white;

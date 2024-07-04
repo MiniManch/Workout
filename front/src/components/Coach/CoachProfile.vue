@@ -6,7 +6,7 @@
         <div v-for="field in fields" :key="field.id" class="inputDiv">
           <label :for="field.id">{{ field.label }}:</label>
           <input :type="field.type" :id="field.id" v-model="field.value" required>
-          <button class="btn" @click="updateField(field.id)">Update {{ field.label }}</button>
+          <AnimatedButton :buttonText="`Update ${ field.label }`" @clicked="updateField(field.id)"/>
         </div>
       </form>
     </div>
@@ -14,7 +14,12 @@
 </template>
 
 <script>
+import AnimatedButton from '@/components/General/buttons/AnimatedButton.vue';
+
 export default {
+  components:{
+    AnimatedButton
+  },
   data() {
     const coach = JSON.parse(localStorage.getItem('coach')) || {};
     return {
@@ -114,6 +119,7 @@ table {
   margin-top: 3vh;
 }
 
+
 .inputDiv {
   display: flex;
   flex-direction: column;
@@ -133,6 +139,7 @@ table {
 .coachProfile input {
   width: 15vw;
   padding: 8px;
+  margin-bottom:2vh;
   box-sizing: border-box;
   font-size: 1.4em;
 }

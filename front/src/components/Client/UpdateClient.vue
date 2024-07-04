@@ -15,7 +15,7 @@
           <label for="clientPhone">Phone Number:</label>
           <input type="tel" id="clientPhone" v-model="newClient.phone" required>
         </div>
-        <button class="btn update-btn" type="submit">Update Client</button>
+        <AnimatedButton buttonText="Update Client" />
       </form>
     </div>
     <div v-if="clientSessions.length" class="sessionsList">
@@ -37,11 +37,14 @@
 <script>
 import PopUpModal from '../General/PopUpModal.vue';
 import YesOrNoModal from '@/components/General/YesOrNoModal.vue';
+import AnimatedButton from '@/components/General/buttons/AnimatedButton.vue';
+
 
 export default {
   components: {
     PopUpModal,
-    YesOrNoModal
+    YesOrNoModal,
+    AnimatedButton
   },
   data() {
     return {
@@ -224,6 +227,7 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding-top:10vh;
 }
 
 h1 {
@@ -237,7 +241,7 @@ h1 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #c73659;
+  background-color: rgba(130, 130, 130, 0.25);
 }
 
 .inputDiv {
@@ -255,6 +259,7 @@ label {
 input {
   width: 15vw;
   padding: 8px;
+  margin-bottom:2vh;
   box-sizing: border-box;
   font-size: 1.4em;
 }
@@ -298,7 +303,7 @@ form {
 }
 
 .sessionsList li {
-  background-color: #c73659;
+  background-color: rgba(130, 130, 130, 0.25);
   padding: 10px;
   margin-bottom: 5px;
   border: 1px solid #ddd;

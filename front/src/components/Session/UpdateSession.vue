@@ -34,7 +34,9 @@
             <option v-for="client in clients" :key="client.id" :value="client.id">{{ client.name }}</option>
           </select>
         </div>
-        <button class="btn" type="submit">Update Session</button>
+        <div class="buttonDiv">
+          <AnimatedButton buttonText="Update Session" />
+        </div>
       </form>
     </div>
     <PopUpModal v-if="showModal" :type="modalType" :message="modalMessage" @close="handleModalClose" />
@@ -43,10 +45,12 @@
 
 <script>
 import PopUpModal from '../General/PopUpModal.vue';
+import AnimatedButton from '@/components/General/buttons/AnimatedButton.vue';
 
 export default {
   components: {
-    PopUpModal
+    PopUpModal,
+    AnimatedButton
   },
   data() {
     return {
@@ -157,7 +161,6 @@ export default {
         }
       }
       this.times = times;
-      console.log(this.times)
     },
     formatTime(timeString) {
       const [hours, minutes] = timeString.split(':');
@@ -199,6 +202,7 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding-top:10vh;
 }
 
 h1 {
@@ -212,7 +216,7 @@ h1 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #c73659;
+  background-color: rgba(130, 130, 130, 0.25);
 }
 
 .inputDiv {
@@ -220,6 +224,13 @@ h1 {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.labelDiv {
+  margin-bottom: 5px;
+  font-size: 1.5em;
+  display: flex;
+  justify-content: center;
 }
 
 label {
@@ -235,11 +246,7 @@ select {
   font-size: 1.4em;
 }
 
-button {
-  padding: 10px 20px;
-  font-size: 1.5em;
-  background-color: #eeeeee;
-  color: #c73659;
+.buttonDiv {
   margin-top: 2vh;
   width: fit-content;
 }

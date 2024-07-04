@@ -5,7 +5,7 @@
   <div class="sidebar" :class="{ 'visible': showSideBar }" v-if="coach.id">
     <div class="close" @click="hideTheSideBar">X</div>
     <div class="buttons">
-      <button class="btn" @click="fetchData('client')">
+      <button class="btn" @click="fetchData('client')"> 
         <img src="/icons/team-50.png" alt="">
         <p>Your Clients</p>
       </button>
@@ -13,11 +13,11 @@
         <img src="/icons/schedule-60.png" alt="">
         <p>Your Sessions</p>
       </button>
-      <button class="btn" @click="goTo('create_client')">
+      <button class="btn" @click="goTo('/create_client')">
           <img src="/icons/trainee-50.png" alt="">
           <p>Add new client!</p>
       </button>
-      <button class="btn" @click="goTo('create_session')">
+      <button class="btn" @click="goTo('/create_session')">
           <img src="/icons/workout-50.png" alt="">
           <p>Create Session!</p>
       </button>
@@ -198,7 +198,8 @@ export default {
   position: fixed;
   top: 20vh;
   left: 1vw;
-  z-index:1;
+  z-index: 3;
+  cursor:pointer;
 }
 .sidebar {
   position: fixed;
@@ -237,6 +238,11 @@ export default {
   color: white;
   padding: 10px;
   text-align: left;
+
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 .sidebar .btn img {
   margin-right: 10px;

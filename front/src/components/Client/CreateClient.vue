@@ -15,7 +15,7 @@
           <label for="clientPhone">Phone Number:</label>
           <input type="tel" id="clientPhone" v-model="newClient.phone" required>
         </div>
-        <button class="btn" type="submit">Add Client</button>
+        <AnimatedButton buttonText="Create Client" />
       </form>
     </div>
     <PopUpModal v-if="showModal" :type="modalType" :message="modalMessage" @close="handleModalClose"/>
@@ -24,10 +24,13 @@
 
 <script>
 import PopUpModal from '../General/PopUpModal.vue';
+import AnimatedButton from '@/components/General/buttons/AnimatedButton.vue';
+
 
 export default {
   components: {
-    PopUpModal
+    PopUpModal,
+    AnimatedButton
   },
   data() {
     return {
@@ -118,6 +121,7 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding-top:10vh;
 }
 
 h1 {
@@ -131,7 +135,8 @@ h1 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #c73659;
+  background-color: rgba(130, 130, 130, 0.25);
+
 }
 
 .inputDiv {
@@ -149,6 +154,7 @@ label {
 input {
   width: 15vw;
   padding: 8px;
+  margin-bottom:3vh;
   box-sizing: border-box;
   font-size: 1.4em;
 }
