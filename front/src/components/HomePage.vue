@@ -5,7 +5,11 @@
       Your browser does not support the video tag.
     </video>
     <div class="overlay">
-      <CallToActionBtn text="Your Profile" @clicked="goToProfile"/>
+      <CallToActionBtn text="Your Profile" @clicked="goTo('/coach_profile')" v-if='coach'/>
+      <div class='logging' v-else>
+        <CallToActionBtn text="Login" @clicked="goTo('/login')"/>
+        <CallToActionBtn text="Register" @clicked="goTo('/register')"/>
+      </div>
     </div>
   </div>
 </template>
@@ -17,10 +21,16 @@ export default {
   components:{
     CallToActionBtn
   },
+  data(){
+    const coach = JSON.parse(localStorage.getItem('coach'));
+    return{
+      coach,
+    }  
+  },
   methods:{
-    goToProfile(){
-      this.$router.push('coach_profile')
-    }
+    goTo(link){
+      this.$router.push(link);
+    },
   }
 };
 </script>
@@ -53,5 +63,9 @@ export default {
   z-index: 2; 
 }
 
-
+.logging{
+  width:10vw;
+  display:flex;
+  justify-content: space-between;
+}
 </style>

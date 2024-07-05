@@ -1,42 +1,44 @@
 <template>
-  <div class="showSideBar" @mouseover="showTheSideBar">
-    <img src="/icons/menu-50.png" alt="">
-  </div>
-  <div class="sidebar" :class="{ 'visible': showSideBar }" v-if="coach.id">
-    <div class="close" @click="hideTheSideBar">X</div>
-    <div class="buttons">
-      <button class="btn" @click="fetchData('client')"> 
-        <img src="/icons/team-50.png" alt="">
-        <p>Your Clients</p>
-      </button>
-      <button class="btn" @click="fetchData('session')">
-        <img src="/icons/schedule-60.png" alt="">
-        <p>Your Sessions</p>
-      </button>
-      <button class="btn" @click="goTo('/create_client')">
-          <img src="/icons/trainee-50.png" alt="">
-          <p>Add new client!</p>
-      </button>
-      <button class="btn" @click="goTo('/create_session')">
-          <img src="/icons/workout-50.png" alt="">
-          <p>Create Session!</p>
-      </button>
+  <div>
+    <div class="showSideBar" @mouseover="showTheSideBar" v-if="coach && coach.id">
+      <img src="/icons/menu-50.png" alt="">
     </div>
-  </div>
+    <div class="sidebar" :class="{ 'visible': showSideBar }" >
+      <div class="close" @click="hideTheSideBar">X</div>
+      <div class="buttons">
+        <button class="btn" @click="fetchData('client')"> 
+          <img src="/icons/team-50.png" alt="">
+          <p>Your Clients</p>
+        </button>
+        <button class="btn" @click="fetchData('session')">
+          <img src="/icons/schedule-60.png" alt="">
+          <p>Your Sessions</p>
+        </button>
+        <button class="btn" @click="goTo('/create_client')">
+            <img src="/icons/trainee-50.png" alt="">
+            <p>Add new client!</p>
+        </button>
+        <button class="btn" @click="goTo('/create_session')">
+            <img src="/icons/workout-50.png" alt="">
+            <p>Create Session!</p>
+        </button>
+      </div>
+    </div>
 
-  <PopUpModal v-if="showModal" :type="modalType" :message="modalMessage" @close="handleModalClose" />
-  <YesOrNoModal v-if="showYesNoModal" @close="handleYesNoModalClose" @yes="performAction" />
-  <PaginatedTableModal
-    v-if="showTable"
-    :show="showTable"
-    :data="tableData"
-    :itemsPerPage="5"
-    :title="tableTitle"
-    :type="typeOfData"
-    @close="closeTable"
-    @delete-item="confirmAction"
-    @update-item="handleUpdate"
-  />
+    <PopUpModal v-if="showModal" :type="modalType" :message="modalMessage" @close="handleModalClose" />
+    <YesOrNoModal v-if="showYesNoModal" @close="handleYesNoModalClose" @yes="performAction" />
+    <PaginatedTableModal
+      v-if="showTable"
+      :show="showTable"
+      :data="tableData"
+      :itemsPerPage="5"
+      :title="tableTitle"
+      :type="typeOfData"
+      @close="closeTable"
+      @delete-item="confirmAction"
+      @update-item="handleUpdate"
+    />
+  </div>
 </template>
 
 <script>
@@ -51,9 +53,8 @@ export default {
     PaginatedTableModal,
   },
   data() {
-    const coach = JSON.parse(localStorage.getItem('coach')) || {};
     return {
-      coach,
+      coach: null, // Initialize coach as null initially
       showSideBar: false,
       tableData: [],
       typeOfData: null,
@@ -66,12 +67,18 @@ export default {
       itemToDelete: null,
     };
   },
-  mounted() {
-    if (!this.coach.id) {
-      this.$router.push({ name: 'Login' });
-    }
+  created() {
+    // Ensure coach data is properly initialized when component is created
+    this.initializeCoach();
   },
   methods: {
+    initializeCoach() {
+      // Retrieve coach data from localStorage
+      const storedCoach = JSON.parse(localStorage.getItem('coach'));
+      if (storedCoach && storedCoach.id) {
+        this.coach = storedCoach;
+      }
+    },
     async fetchData(type) {
       try {
         const response = await fetch(`/api/${type}/get_coach_${type}_data/${this.coach.id}`, {
@@ -179,6 +186,7 @@ export default {
     },
     handleUpdate(data) {
       this.$router.push(`/update/${this.typeOfData}/${data.itemId}`);
+      this.closeTable();
     },
     showTheSideBar() {
       this.showSideBar = true;
@@ -186,6 +194,10 @@ export default {
     hideTheSideBar() {
       this.showSideBar = false;
     },
+  },
+  watch: {
+    // Watch for changes in localStorage and update coach data
+    '$route': 'initializeCoach'
   }
 };
 </script>

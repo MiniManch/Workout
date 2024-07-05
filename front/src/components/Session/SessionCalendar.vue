@@ -2,13 +2,19 @@
   <div class="containerOfAll">
     <div class="calendar">
       <div class="header">
-        <button class="btn" @click="prevMonth">
-          <img src="/icons/back-50.png" alt="">
-        </button>
+        <AnimatedButton
+            @clicked="prevMonth"
+            :style="{'margin-left':'0','margin-right':'0'}"
+          >
+          <img src="/icons/back-50.png" alt="Previous Month">
+        </AnimatedButton>
         <span class="currentMonth">{{ currentMonthYear }}</span>
-        <button class="btn" @click="nextMonth">
-          <img src="/icons/next-50.png" alt="">
-        </button>
+        <AnimatedButton
+          @clicked="nextMonth"
+          :style="{'margin-left':'0','margin-right':'0'}"
+          >
+          <img src="/icons/next-50.png" alt="Next Month">
+        </AnimatedButton>
       </div>
       <div class="days">
         <div
@@ -52,12 +58,14 @@
 import PopUpModal from '../General/PopUpModal.vue';
 import PaginatedTableModal from "@/components/General/PaginatedTableModal.vue";
 import YesOrNoModal from "@/components/General/YesOrNoModal.vue";
+import AnimatedButton from "@/components/General/buttons/AnimatedButton.vue"; 
 
 export default {
   components: {
     PopUpModal,
     PaginatedTableModal,
-    YesOrNoModal
+    YesOrNoModal,
+    AnimatedButton
   },
   data() {
     return {
@@ -77,12 +85,12 @@ export default {
   },
   computed: {
     currentMonthYear() {
-    const options = {
-      year: 'numeric',
-      month: 'long'
-    };
-    return this.currentDate.toLocaleDateString('en-US', options);
-  },
+      const options = {
+        year: 'numeric',
+        month: 'long'
+      };
+      return this.currentDate.toLocaleDateString('en-US', options);
+    },
     days() {
       const start = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth(), 1);
       const end = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth() + 1, 0);
@@ -156,7 +164,7 @@ export default {
                appointmentDate.getDate() === date.getDate();
       });
     },
-      openTable(day) {
+    openTable(day) {
       if (day.appointments.length > 0) {
         this.tableData = day.appointments;
         this.tableTitle = `Appointments on ${day.date.toLocaleDateString('en-US')}`; // Set the locale to English (United States)
@@ -220,10 +228,10 @@ export default {
 };
 </script>
 
-
 <style scoped>
 *{
   user-select: none;
+  font-family: "Jost";
 }
 .containerOfAll {
   width: 100%;
@@ -289,12 +297,12 @@ button {
 }
 
 .appointment {
-  background-color: #f0f0f0;
+  background-color: rgba(130, 130, 130, 0.25);
   margin-top: 5px;
   padding: 2px 5px;
   border-radius: 3px;
-  color: #c73659;
+  color: white;
   padding: 10px;
-  cursor:pointer;
+  cursor: pointer;
 }
 </style>

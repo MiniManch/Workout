@@ -14,7 +14,6 @@ import SessionCalendar from '@/components/Session/SessionCalendar.vue';
 
 const routes = [
     { path: '/', component: HomePage, name: 'Home' },
-    { path: '/about', component: HomePage, name: 'about' },
     { path: '/login', component: CoachLogin, name: 'Login' },
     { path: '/register', component: CoachSignUp, name: 'SignUp' },
     { path: '/coach_profile', component: CoachProfile, name: 'CoachProfile' },

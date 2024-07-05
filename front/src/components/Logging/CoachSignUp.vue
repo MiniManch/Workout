@@ -15,7 +15,7 @@
           <label for="phone">Phone Number:</label>
           <input type="tel" id="phone" v-model="phone" required>
         </div>
-        <button class="btn" type="submit">Register</button>
+        <AnimatedButton buttonText="Register"/>
       </form>
     </div>
     <PopUpModal v-if="showModal" :type="modalType" :message="modalMessage" @close="handleModalClose"/>
@@ -24,10 +24,12 @@
 
 <script>
 import PopUpModal from '@/components/General/PopUpModal.vue';
+import AnimatedButton from '../General/buttons/AnimatedButton.vue';
 
 export default {
   components: {
     PopUpModal,
+    AnimatedButton
   },
   data() {
     return {
@@ -78,7 +80,7 @@ export default {
     },
     handleModalClose() {
       this.showModal = false;
-      this.$router.push({ name: 'CoachProfile' });
+      this.$router.push({ name: 'Login' });
     },
   },
 };
@@ -87,8 +89,9 @@ export default {
   <style scoped>
   .containerOfAll{
     width:100%;
-    height:60%;
+    height:80%;
 
+    padding-top:10vh;
     display:flex;
     flex-direction:column;
     justify-content: center;
@@ -111,8 +114,7 @@ export default {
     display:flex;
     flex-direction: column;
     align-items: center;
-    background-color: #c73659;
-
+    background-color: rgba(130, 130, 130, 0.4);
   }
   .register-form div {
     margin-bottom: 10px;
@@ -125,6 +127,7 @@ export default {
   .register-form input {
     width:15vw;
     padding: 8px;
+    margin-bottom:3vh;
     box-sizing: border-box;
   }
   .register-form button {

@@ -11,7 +11,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="item in filteredPaginatedData" :key="item.id">
+          <tr v-for="(item, index) in filteredPaginatedData" :key="item.id" :class="{ 'odd-row': index % 2 === 1 }">
             <td v-for="(value, key) in item" :key="key" :class="{ hidden: isIdField(key) }">{{ value }}</td>
             <td>
               <button class="delete-btn btn" @click="deleteItem(item)">Delete</button>
@@ -25,8 +25,8 @@
         <button class="btn" v-for="page in totalPages" :key="page" @click="goToPage(page)" :class="{ active: currentPage === page }">{{ page }}</button>
         <button class="btn" @click="nextPage" :disabled="currentPage === totalPages">Next</button>
       </div>
-      <button v-if='type=="session" && !checkIfOpenedByClanedar(title) ' class="calendarBtn btn btn-success" @click="openCalendar">
-        <a href="/session_calendar"><img src="icons/calendar-50.png" alt=""></a>
+      <button v-if='type=="session" && !checkIfOpenedByClanedar(title)' class="calendarBtn btn btn-success" @click="openCalendar">
+        <a href="/session_calendar"><img src="/icons/calendar-50.png" alt=""></a>
       </button>
     </div>
   </div>
@@ -57,6 +57,7 @@ export default {
   },
   data() {
     return {
+      coach: JSON.parse(localStorage.getItem('coach')) || {},
       currentPage: 1
     };
   },
@@ -81,7 +82,7 @@ export default {
         return newItem;
       });
     },
-    updateText(){
+    updateText() {
       return this.type === 'client' ? 'Profile' : 'Update';
     }
   },
@@ -106,7 +107,6 @@ export default {
       const itemId = this.getItemId(item);
       this.$emit('delete-item', { itemId });
     },
-
     updateItem(item) {
       const itemId = this.getItemId(item);
       this.$emit('update-item', { itemId });
@@ -120,13 +120,12 @@ export default {
     isIdField(key) {
       return key.toLowerCase() === 'id' || key.toLowerCase().endsWith('id');
     },
-    clientSchedule(item){
+    clientSchedule(item) {
       const itemId = this.getItemId(item);
       this.$emit('openSchedule', { itemId });
     },
-    checkIfOpenedByClanedar(string){
+    checkIfOpenedByClanedar(string) {
       const substring = "Appointments";
-      console.log(string)
       return string.includes(substring);
     }
   }
@@ -134,6 +133,7 @@ export default {
 </script>
 
 <style scoped>
+
 .modal {
   display: flex;
   justify-content: center;
@@ -144,19 +144,19 @@ export default {
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  color: #A91D3A;
+  color: white;
   z-index: 5;
 }
 
 .modal-content {
-  background-color: #fff;
+  background-color: black;
   padding: 20px;
   border-radius: 8px;
   width: 50%;
   max-height: 80%;
   overflow-y: auto;
 
-  display:flex;
+  display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -173,21 +173,26 @@ table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 10px;
+  background-color: rgba(130, 130, 130, 0.25);
 }
 
 th, td {
   padding: 8px 12px;
-  border: 1px solid #A91D3A;
+  border: 1px solid rgba(130, 130, 130, 0.25);
   text-align: center;
 }
 
 th {
-  background-color: #A91D3A;
+  background-color: rgba(130, 130, 130, 0.25);
   color: white;
 }
 
 td.hidden {
   display: none;
+}
+
+tr.odd-row {
+  background-color: rgba(130, 130, 130, 0.4);
 }
 
 .pagination {
@@ -225,9 +230,9 @@ button.active {
   cursor: pointer;
 }
 
-.calendarBtn{
-  margin-top:3vh;
-  border:none;
-  width:fit-content;
+.calendarBtn {
+  margin-top: 3vh;
+  border: none;
+  width: fit-content;
 }
 </style>

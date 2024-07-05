@@ -3,7 +3,7 @@
       <h1>Login</h1>
       <form @submit.prevent="LogInCoach">
         <input class='form-control' type="text" v-model="coachName" placeholder="Enter coach name" />
-        <button class='btn' type="submit">Login!</button>
+        <AnimatedButton buttonText="Login!"/>
       </form>
     </div>
     <PopUpModal 
@@ -16,10 +16,12 @@
   
 <script>
 import PopUpModal from "@/components/General/PopUpModal.vue";
+import AnimatedButton from "../General/buttons/AnimatedButton.vue";
 
 export default {
   components: {
     PopUpModal,
+    AnimatedButton
   },
   data() {
     return {
@@ -47,10 +49,6 @@ export default {
           localStorage.setItem('coach', JSON.stringify(data.coach_data)); // Store the full coach data in localStorage
           
           this.showModal = true;
-
-          // setTimeout(() => {
-          //   this.$router.push({ name: 'CoachProfile' });
-          // }, 5000);
         } else {
           this.modalMessage = data.message || 'An error occurred';
           this.modalType = 'error';
@@ -65,7 +63,7 @@ export default {
     handleModalClose() {
       this.showModal = false;
       if (this.modalType === 'success') {
-        this.$router.push({ name: 'CoachProfile' });
+        this.$router.push('/');
       }
     }
   }
@@ -85,8 +83,8 @@ export default {
   
   form {
     width: 25vw;
-    height: 30vh;
-    background-color: #c73659;
+    height: 20vh;
+    background-color: rgba(130, 130, 130, 0.4);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -109,13 +107,8 @@ export default {
     margin-top: 1em;
     font-size: 1em;
   }
-  
-  .success {
-    color: green;
-  }
-  
-  .error {
-    color: red;
+  h1{
+    margin-bottom:3vh;
   }
   </style>
   
