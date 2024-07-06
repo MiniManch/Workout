@@ -56,7 +56,7 @@ export default {
     return {
       newSession: {
         name: '',
-        date: '',
+        date: '', // Initialize with empty string
         time: '',
         duration: '',
         client_id: ''
@@ -198,11 +198,15 @@ export default {
   },
   mounted() {
     this.fetchClients();
-    this.generateTimeOptions(); // Generate time options on component mount
+    this.generateTimeOptions();
+    
+    const routeDate = this.$route.params.date;
+    if (routeDate) {
+      this.newSession.date = routeDate; // Set date field if route param exists
+    }
   },
 };
 </script>
-
 <style scoped>
 .containerOfAll {
   width: 100%;

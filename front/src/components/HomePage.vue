@@ -1,14 +1,24 @@
 <template>
   <div class="header">
-    <video autoplay muted loop playsinline class="background-video">
+    <LoadingModal :show="loading" />
+    <video 
+      v-show="!loading"
+      autoplay 
+      muted 
+      loop 
+      playsinline 
+      class="background-video"
+      @loadeddata="handleVideoLoad"
+      @error="handleVideoError"
+    >
       <source src="videos/homepage.mp4" type="video/mp4">
       Your browser does not support the video tag.
     </video>
-    <div class="overlay">
-      <CallToActionBtn text="Your Profile" @clicked="goTo('/coach_profile')" v-if='coach'/>
-      <div class='logging' v-else>
-        <CallToActionBtn text="Login" @clicked="goTo('/login')"/>
-        <CallToActionBtn text="Register" @clicked="goTo('/register')"/>
+    <div class="overlay" v-show="!loading">
+      <CallToActionBtn text="Your Profile" @clicked="goTo('/coach_profile')" v-if="coach" />
+      <div class="logging" v-else>
+        <CallToActionBtn text="Login" @clicked="goTo('/login')" />
+        <CallToActionBtn text="Register" @clicked="goTo('/register')" />
       </div>
     </div>
   </div>
@@ -16,22 +26,34 @@
 
 <script>
 import CallToActionBtn from "@/components/General/buttons/CallToActionBtn.vue";
+import LoadingModal from '@/components/General/LoadingModal.vue';
 
 export default {
-  components:{
-    CallToActionBtn
+  components: {
+    CallToActionBtn,
+    LoadingModal,
   },
-  data(){
+  data() {
     const coach = JSON.parse(localStorage.getItem('coach'));
-    return{
+    return {
       coach,
-    }  
+      loading: true,
+    };
   },
-  methods:{
-    goTo(link){
+  methods: {
+    goTo(link) {
       this.$router.push(link);
     },
-  }
+    handleVideoLoad() {
+      setTimeout(() => {
+        this.loading = false;
+      }, 1000);
+    },
+    handleVideoError() {
+      console.error('Failed to load video.');
+      this.loading = false;
+    },
+  },
 };
 </script>
 
@@ -63,9 +85,9 @@ export default {
   z-index: 2; 
 }
 
-.logging{
-  width:10vw;
-  display:flex;
+.logging {
+  width: 10vw;
+  display: flex;
   justify-content: space-between;
 }
 </style>

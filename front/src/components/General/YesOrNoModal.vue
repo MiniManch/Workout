@@ -48,7 +48,7 @@
     background-color: rgba(0, 0, 0, 0.5);
     color: #A91D3A;
 
-    z-index: 5;
+    z-index: 6;
   }
   
   .modal-content {

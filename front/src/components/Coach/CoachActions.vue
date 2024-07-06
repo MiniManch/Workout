@@ -3,7 +3,7 @@
     <div class="showSideBar" @mouseover="showTheSideBar" v-if="coach && coach.id">
       <img src="/icons/menu-50.png" alt="">
     </div>
-    <div class="sidebar" :class="{ 'visible': showSideBar }" >
+    <div class="sidebar" :class="{ 'visible': showSideBar }">
       <div class="close" @click="hideTheSideBar">X</div>
       <div class="buttons">
         <button class="btn" @click="fetchData('client')"> 
@@ -86,13 +86,30 @@ export default {
           headers: { 'Content-Type': 'application/json' },
         });
 
-        if (!response.ok) throw new Error(`Failed to fetch ${type}s`);
+        if (!response.ok) {
+          if (response.status === 404) {
+            this.tableData = [];
+            this.modalMessage = `No ${type}s found. Please create more.`;
+            this.modalType = 'error';
+            this.showModal = true;
+          } else {
+            throw new Error(`Failed to fetch ${type}s`);
+          }
+          return;
+        }
 
         const data = await response.json();
-        this.tableData = type === 'client' ? data.clients : data.sessions;
-        this.typeOfData = type;
-        this.tableTitle = `Your ${type[0].toUpperCase() + type.slice(1)}s`;
-        this.showTable = true;
+        if ((type === 'client' && !data.clients.length) || (type === 'session' && !data.sessions.length)) {
+          this.tableData = [];
+          this.modalMessage = `No ${type}s found. Please create more.`;
+          this.modalType = 'error';
+          this.showModal = true;
+        } else {
+          this.tableData = type === 'client' ? data.clients : data.sessions;
+          this.typeOfData = type;
+          this.tableTitle = `Your ${type[0].toUpperCase() + type.slice(1)}s`;
+          this.showTable = true;
+        }
       } catch (error) {
         this.modalType = 'error';
         this.modalMessage = `Error fetching ${type}s: ${error.message}`;
@@ -166,7 +183,7 @@ export default {
         this.showModal = true;
       }
     },
-    goTo(link){
+    goTo(link) {
       this.$router.push(link);
     },
     handleYesNoModalClose() {
@@ -196,7 +213,6 @@ export default {
     },
   },
   watch: {
-    // Watch for changes in localStorage and update coach data
     '$route': 'initializeCoach'
   }
 };
@@ -213,6 +229,7 @@ export default {
   z-index: 3;
   cursor:pointer;
 }
+
 .sidebar {
   position: fixed;
   left: -220px;
@@ -224,19 +241,21 @@ export default {
   flex-direction: column;
   padding: 20px;
   gap: 15px;
-  z-index: 10;
+  z-index: 4;
   transition: left 0.3s ease;
 }
 
 .sidebar.visible {
   left: 0;
 }
+
 .close {
   font-size: 20px;
   cursor: pointer;
   position: absolute;
   top: 20px;
 }
+
 .buttons {
   display: flex;
   flex-direction: column;
@@ -256,9 +275,11 @@ export default {
   justify-content: center;
   align-items: center;
 }
+
 .sidebar .btn img {
   margin-right: 10px;
 }
+
 .sidebar .btn a {
   color: inherit;
   text-decoration: none;

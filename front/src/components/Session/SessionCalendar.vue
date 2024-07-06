@@ -3,16 +3,16 @@
     <div class="calendar">
       <div class="header">
         <AnimatedButton
-            @clicked="prevMonth"
-            :style="{'margin-left':'0','margin-right':'0'}"
-          >
+          @clicked="prevMonth"
+          :style="{'margin-left':'0','margin-right':'0'}"
+        >
           <img src="/icons/back-50.png" alt="Previous Month">
         </AnimatedButton>
         <span class="currentMonth">{{ currentMonthYear }}</span>
         <AnimatedButton
           @clicked="nextMonth"
           :style="{'margin-left':'0','margin-right':'0'}"
-          >
+        >
           <img src="/icons/next-50.png" alt="Next Month">
         </AnimatedButton>
       </div>
@@ -21,20 +21,35 @@
           class="day"
           v-for="day in days"
           :key="day.date"
-          @click="openTable(day)"
         >
           <div :class="{ today: isToday(day.date) }">
-            {{ day.date.getDate() }}
+            <span class="date-and-icon">
+              {{ day.date.getDate() }}
+              <img v-if="isToday(day.date)" v-tooltip="'today'" src="/icons/today-50.png" alt="Today" class="today-icon">
+            </span>
             <template v-if="isToday(day.date)">
-              <img v-tooltip="'today'" src="/icons/today-50.png" alt="Today" class="today-icon">
+              <GeneralButton
+                @clicked="redirectToSessionPage(day.date)"
+                buttonText="Add Session"
+                class="center-button"
+              />
             </template>
           </div>
-          <div v-if="day.appointments.length > 1" class="appointment">
-            Multiple appointments
-          </div>
-          <div v-else-if="day.appointments.length === 1" class="appointment">
-            {{ day.appointments[0].ClientName }} at {{ formatTime(day.appointments[0].StartTime) }}
-          </div>
+          <template v-if="shouldDisplayAddSessionButton(day)">
+            <GeneralButton
+              v-if="day.date > currentDate"
+              @clicked="redirectToSessionPage(day.date)"
+              buttonText="Add Session"
+              class="center-button"
+            />
+          </template>
+          <template v-else-if="day.appointments.length > 0">
+            <GeneralButton
+              @clicked="openTable(day)"
+              buttonText="View Appointments"
+              class="center-button"
+            />
+          </template>
         </div>
       </div>
     </div>
@@ -59,13 +74,15 @@ import PopUpModal from '../General/PopUpModal.vue';
 import PaginatedTableModal from "@/components/General/PaginatedTableModal.vue";
 import YesOrNoModal from "@/components/General/YesOrNoModal.vue";
 import AnimatedButton from "@/components/General/buttons/AnimatedButton.vue"; 
+import GeneralButton from "@/components/General/buttons/GeneralButton.vue";
 
 export default {
   components: {
     PopUpModal,
     PaginatedTableModal,
     YesOrNoModal,
-    AnimatedButton
+    AnimatedButton,
+    GeneralButton
   },
   data() {
     return {
@@ -164,13 +181,15 @@ export default {
                appointmentDate.getDate() === date.getDate();
       });
     },
+    shouldDisplayAddSessionButton(day) {
+      const today = new Date();
+      return this.formatDate(day.date) > this.formatDate(today) && day.appointments.length === 0;
+    },
     openTable(day) {
-      if (day.appointments.length > 0) {
-        this.tableData = day.appointments;
-        this.tableTitle = `Appointments on ${day.date.toLocaleDateString('en-US')}`; // Set the locale to English (United States)
-        this.typeOfData = 'session';
-        this.showTable = true;
-      }
+      this.tableData = day.appointments;
+      this.tableTitle = `Appointments on ${day.date.toLocaleDateString('en-US')}`; // Set the locale to English (United States)
+      this.typeOfData = 'session';
+      this.showTable = true;
     },
     closeTable() {
       this.showTable = false;
@@ -223,6 +242,16 @@ export default {
     handleYesNoModalClose() {
       this.showYesNoModal = false;
       this.itemToDelete = null;
+    },
+    redirectToSessionPage(date) {
+      const formattedDate = this.formatDate(date); // Use a utility function to format the date as needed
+      this.$router.push(`/create_session/${formattedDate}`);
+    },
+    formatDate(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
     },
   }
 };
@@ -287,13 +316,24 @@ button {
 
 .today {
   display: flex;
+  flex-direction: column;
+}
+
+.date-and-icon {
+  display: flex;
   align-items: center;
 }
 
 .today-icon {
-  width: 30px;
-  height: 30px;
   margin-left: 5px;
+  width: 20px;
+  height: 20px;
+}
+
+.center-button {
+  margin-top: 5px;
+  align-self: center;
+  font-size: 0.9rem;
 }
 
 .appointment {

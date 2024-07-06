@@ -10,15 +10,19 @@
         </div>
       </form>
     </div>
+    <PopUpModal v-if="showModal" :type="modalType" :message="modalMessage" @close="handleModalClose" />
   </div>
 </template>
 
 <script>
 import AnimatedButton from '@/components/General/buttons/AnimatedButton.vue';
+import PopUpModal from '@/components/General/PopUpModal.vue';
+
 
 export default {
   components:{
-    AnimatedButton
+    AnimatedButton,
+    PopUpModal,
   },
   data() {
     const coach = JSON.parse(localStorage.getItem('coach')) || {};
@@ -42,8 +46,8 @@ export default {
   methods: {
     async updateField(field) {
       const fieldValue = this.fields.find(f => f.id === field).value;
-
       if (fieldValue === this.coach[field]) {
+        console.log('heyo')
         this.modalType = 'error';
         this.modalMessage = `No change in ${field}. Update not performed.`;
         this.showModal = true;

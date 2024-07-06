@@ -9,9 +9,6 @@ import AddSession from '@/components/Session/AddSession.vue';
 import UpdateSession from '@/components/Session/UpdateSession.vue';
 import SessionCalendar from '@/components/Session/SessionCalendar.vue';
 
-
-
-
 const routes = [
     { path: '/', component: HomePage, name: 'Home' },
     { path: '/login', component: CoachLogin, name: 'Login' },
@@ -19,9 +16,9 @@ const routes = [
     { path: '/coach_profile', component: CoachProfile, name: 'CoachProfile' },
     { path: '/create_client', component: CreateClient, name: 'CreateClient' },
     { path: '/update/client/:id', component: UpdateClient, name: 'UpdateClient' },
-    { path: '/create_session', component: AddSession, name: 'AddSession' },
+    { path: '/create_session/:date?', component: AddSession, name: 'AddSession' }, 
     { path: '/update/session/:id', component: UpdateSession, name: 'UpdateSession' },
-    { path: '/session_calendar', component: SessionCalendar, name: 'Session Calnedar' },
+    { path: '/session_calendar', component: SessionCalendar, name: 'SessionCalendar' },
 ];
 
 const router = createRouter({
