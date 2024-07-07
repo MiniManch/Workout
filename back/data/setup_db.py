@@ -112,13 +112,12 @@ def setup_database():
     create_tables(cursor)
     connection.commit()
 
-    # Load test data from JSON file
-    # with open(dataFile) as f:
-    #     test_data = json.load(f)
+    with open(dataFile) as f:
+        test_data = json.load(f)
 
-    # # Insert test data into tables
-    # for table, data in test_data.items():
-    #     insert_data(cursor, table.capitalize(), data)
+    # Insert test data into tables
+    for table, data in test_data.items():
+        insert_data(cursor, table.capitalize(), data)
     
     connection.commit()
     cursor.close()
