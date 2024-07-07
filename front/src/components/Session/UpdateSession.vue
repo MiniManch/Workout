@@ -73,7 +73,7 @@ export default {
   methods: {
     async fetchSessionData(sessionId) {
       try {
-        const response = await fetch(`/api/session/get_session/${sessionId}/${this.coach.id}`, {
+        const response = await fetch(`/api/session/${sessionId}/coach/${this.coach.id}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
@@ -102,8 +102,8 @@ export default {
     },
     async updateSession() {
       try {
-        const response = await fetch(`/api/session/update/${this.updatedSession.SessionID}`, {
-          method: 'POST',
+        const response = await fetch(`/api/session/${this.updatedSession.SessionID}`, {
+          method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
           },
@@ -128,7 +128,7 @@ export default {
     },
     async fetchClients() {
       try {
-        const response = await fetch(`/api/client/get_coach_client_data/${this.coach.id}`, {
+        const response = await fetch(`/api/client/coach/${this.coach.id}`, {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' }
         });

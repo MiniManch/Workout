@@ -81,7 +81,7 @@ export default {
     },
     async fetchData(type) {
       try {
-        const response = await fetch(`/api/${type}/get_coach_${type}_data/${this.coach.id}`, {
+        const response = await fetch(`/api/${type}/coach/${this.coach.id}`, {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' },
         });
@@ -99,6 +99,7 @@ export default {
         }
 
         const data = await response.json();
+        console.log(data);
         if ((type === 'client' && !data.clients.length) || (type === 'session' && !data.sessions.length)) {
           this.tableData = [];
           this.modalMessage = `No ${type}s found. Please create more.`;
@@ -127,8 +128,8 @@ export default {
       }
 
       try {
-        const response = await fetch(`/api/coach/update/${field}`, {
-          method: 'POST',
+        const response = await fetch(`/api/coach/${field}`, {
+          method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
             'CoachID': this.coach.id,
@@ -164,7 +165,7 @@ export default {
     },
     async deleteItem({ itemId }) {
       try {
-        const response = await fetch(`/api/${this.typeOfData}/delete/${this.coach.id}/${itemId}`, {
+        const response = await fetch(`/api/${this.typeOfData}/${itemId}/coach/${this.coach.id}`, {
           method: 'DELETE',
           headers: { 'Content-Type': 'application/json' },
         });

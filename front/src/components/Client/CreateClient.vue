@@ -48,7 +48,7 @@ export default {
   methods: {
     async addClient() {
       try {
-        const response = await fetch(`/api/client/add/${this.coach.id}`, {
+        const response = await fetch(`/api/client/coach/${this.coach.id}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

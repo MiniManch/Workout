@@ -104,9 +104,9 @@ def setup_database():
     connection = pymysql.connect(**db_config)
     cursor = connection.cursor()
 
-    # # Drop existing tables
-    # drop_tables(cursor)
-    # connection.commit()
+    # Drop existing tables
+    drop_tables(cursor)
+    connection.commit()
 
     # Check and create tables
     create_tables(cursor)

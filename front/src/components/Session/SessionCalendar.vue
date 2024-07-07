@@ -128,7 +128,7 @@ export default {
   methods: {
     async fetchAppointments() {
       try {
-        const response = await fetch(`/api/session/get_coach_session_data/${this.coach.id}`, {
+        const response = await fetch(`/api/session/coach/${this.coach.id}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
@@ -213,7 +213,7 @@ export default {
     },
     async deleteItem({ itemId }) {
       try {
-        const response = await fetch(`/api/session/delete/${this.coach.id}/${itemId}`, {
+        const response = await fetch(`/api/session/${itemId}/coach/${this.coach.id}`, {
           method: 'DELETE',
           headers: { 'Content-Type': 'application/json' }
         });

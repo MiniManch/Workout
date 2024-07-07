@@ -36,7 +36,7 @@
             </option>
           </select>
         </div>
-        <AnimatedButton buttonText="Update" />
+        <AnimatedButton buttonText="Create" />
       </form>
     </div>
     <PopUpModal v-if="showModal" :type="modalType" :message="modalMessage" @close="handleModalClose"/>
@@ -56,7 +56,7 @@ export default {
     return {
       newSession: {
         name: '',
-        date: '', // Initialize with empty string
+        date: '', 
         time: '',
         duration: '',
         client_id: ''
@@ -66,13 +66,13 @@ export default {
       showModal: false,
       coach: JSON.parse(localStorage.getItem('coach')),
       clients: [],
-      times: [] // To store time options
+      times: [] 
     };
   },
   methods: {
     async addSession() {
       try {
-        const response = await fetch(`api/session/add/${this.coach.id}`, {
+        const response = await fetch(`api/session/coach/${this.coach.id}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -103,7 +103,7 @@ export default {
     },
     async fetchClients() {
       try {
-        const response = await fetch(`/api/client/get_coach_client_data/${this.coach.id}`, {
+        const response = await fetch(`/api/client/coach/${this.coach.id}`, {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' }
         });
@@ -187,7 +187,6 @@ export default {
         return;
       }
 
-      // If all validations pass, proceed to addSession
       this.addSession();
     },
     handleModalClose() {
@@ -202,7 +201,7 @@ export default {
     
     const routeDate = this.$route.params.date;
     if (routeDate) {
-      this.newSession.date = routeDate; // Set date field if route param exists
+      this.newSession.date = routeDate; 
     }
   },
 };

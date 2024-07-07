@@ -55,8 +55,8 @@ export default {
       }
 
       try {
-        const response = await fetch(`/api/coach/update/${field}`, {
-          method: 'POST',
+        const response = await fetch(`/api/coach/${field}`, {
+          method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
             'CoachID': this.coach.id

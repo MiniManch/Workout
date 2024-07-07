@@ -25,7 +25,7 @@
           <div class="">
           {{ formatDate(session.Date) }} - {{ session.StartTime.substring(0, session.StartTime. length - 3)  }} {{ session.SessionName }}, {{ session.Duration }} Minutes
           </div>
-          <button class="btn btn-warning" @click="confirmAction(session.id)">Delete</button>
+          <button class="btn btn-warning" @click="confirmAction(session.SessionID)">Delete</button>
         </li>
       </ul>
     </div>
@@ -81,7 +81,7 @@ export default {
   methods: {
     async fetchClientById(clientId) {
       try {
-        const response = await fetch(`/api/client/get_client/${clientId}`);
+        const response = await fetch(`/api/client/${clientId}`);
         const data = await response.json();
         if (response.ok) {
           this.newClient = {
@@ -102,7 +102,7 @@ export default {
     },
     async fetchClientSessions(clientId) {
       try {
-        const response = await fetch(`/api/session/get_client_sessions/${clientId}`);
+        const response = await fetch(`/api/session/client/${clientId}`);
         const data = await response.json();
         if (response.ok) {
           this.clientSessions = data.sessions;
@@ -121,8 +121,8 @@ export default {
     },
     async updateClient() {
       try {
-        const response = await fetch(`/api/client/update/${this.clientId}`, {
-          method: 'POST',
+        const response = await fetch(`/api/client/${this.clientId}`, {
+          method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
           },
@@ -142,6 +142,26 @@ export default {
       } catch (error) {
         this.message = 'An error occurred: ' + error.message;
         this.modalType = 'error';
+        this.showModal = true;
+      }
+    },
+    async deleteSession({ itemId }) {
+      try {
+        const response = await fetch(`/api/session/${itemId}/coach/${this.coach.id}`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        const data = await response.json();
+        this.modalType = response.ok ? 'success' : 'error';
+        this.modalMessage = data.message || `Failed to delete Session`;
+        if (response.ok) {
+          this.clientSessions = this.clientSessions.filter(session => session.id !== itemId);
+        }
+        this.showModal = true;
+      } catch (error) {
+        this.modalType = 'error';
+        this.modalMessage = `An error occurred: ${error.message}`;
         this.showModal = true;
       }
     },
@@ -184,37 +204,16 @@ export default {
       this.itemToDelete = null;
     },
     confirmAction(itemId) {
-      console.log(itemId)
       this.itemToDelete = itemId;
       this.showYesNoModal = true;
     },
     async performAction() {
-      await this.deleteItem({ itemId: this.itemToDelete });
+      await this.deleteSession({ itemId: this.itemToDelete });
       this.showYesNoModal = false;
       this.itemToDelete = null;
       this.modalMessage = `Session was deleted.`;
       this.modalType = 'success';
       this.showModal = true;
-    },
-    async deleteItem({ itemId }) {
-      try {
-        const response = await fetch(`/api/session/delete/${this.coach.id}/${itemId}`, {
-          method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' }
-        });
-
-        const data = await response.json();
-        this.modalType = response.ok ? 'success' : 'error';
-        this.modalMessage = data.message || `Failed to delete ${this.typeOfData}`;
-        if (response.ok) {
-          this.clientSessions = this.clientSessions.filter(session => session.id !== itemId);
-        }
-        this.showModal = true;
-      } catch (error) {
-        this.modalType = 'error';
-        this.modalMessage = `An error occurred: ${error.message}`;
-        this.showModal = true;
-      }
     },
   }
 };

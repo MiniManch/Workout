@@ -3,7 +3,7 @@ from data.setup_db import get_db_connection
 
 client_bp = Blueprint('client', __name__, url_prefix='/client')
 
-@client_bp.route('/get_coach_client_data/<int:coach_id>', methods=['GET'])
+@client_bp.route('/coach/<int:coach_id>', methods=['GET'])
 def get_clients_by_coach(coach_id):
     try:
         db = get_db_connection()
@@ -31,7 +31,7 @@ def get_clients_by_coach(coach_id):
         cursor.close()
         db.close()
 
-@client_bp.route('/update/<int:client_id>', methods=['POST'])
+@client_bp.route('/<int:client_id>', methods=['PUT'])
 def update_client(client_id):
     try:
         db = get_db_connection()
@@ -55,7 +55,7 @@ def update_client(client_id):
         cursor.close()
         db.close()
 
-@client_bp.route('/add/<int:coach_id>', methods=['POST'])
+@client_bp.route('/coach/<int:coach_id>', methods=['POST'])
 def add_client(coach_id):
     try:
         db = get_db_connection()
@@ -81,7 +81,7 @@ def add_client(coach_id):
         cursor.close()
         db.close()
 
-@client_bp.route('/delete/<int:coach_id>/<int:client_id>', methods=['DELETE'])
+@client_bp.route('/<int:client_id>/coach/<int:coach_id>', methods=['DELETE'])
 def delete_client(coach_id, client_id):
     try:
         db = get_db_connection()
@@ -117,12 +117,12 @@ def delete_client(coach_id, client_id):
         cursor.close()
         db.close()
 
-@client_bp.route('/get_client/<int:client_id>', methods=['GET'])
+@client_bp.route('/<int:client_id>', methods=['GET'])
 def get_client_by_id(client_id):
     print(client_id)
     try:
         db = get_db_connection()
-        query = "SELECT ClientID, Name, Email, PhoneNumber, CoachID FROM Client WHERE ClientID = %s"
+        query = "SELECT ClientID, Name, Email, PhoneNumber, CoachID FROM client WHERE ClientID = %s"
         cursor = db.cursor()
         cursor.execute(query, (client_id,))
         client = cursor.fetchone()
@@ -146,4 +146,3 @@ def get_client_by_id(client_id):
     finally:
         cursor.close()
         db.close()
-

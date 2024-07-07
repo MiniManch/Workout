@@ -38,7 +38,6 @@ def create_coach():
         cursor.close()
         connection.close()
 
-
 @coach_bp.route('/login', methods=['POST'])
 def login_coach():
     data = request.json
@@ -71,7 +70,7 @@ def login_coach():
         cursor.close()
         connection.close()
 
-@coach_bp.route('/update/<field>', methods=['POST'])
+@coach_bp.route('/<field>', methods=['PUT'])
 def update_field(field):
     data = request.json
     value = data.get('value')
@@ -114,18 +113,3 @@ def update_field(field):
     finally:
         cursor.close()
         connection.close()
-
-# Route to add a client to a coach
-@coach_bp.route('/add-client', methods=['POST'])
-def add_client_to_coach():
-    data = request.json
-    # Implement your logic to add a client to a coach
-    # Example logic:
-    # coach_id = data.get('coach_id')
-    # client_name = data.get('client_name')
-    # client_email = data.get('client_email')
-    # ... (database insert logic)
-
-    return jsonify({'message': 'Client added to coach successfully'}), 201
-
-# Other coach-related routes can be added here...
