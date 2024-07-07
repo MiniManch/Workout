@@ -104,25 +104,25 @@ def setup_database():
     connection = pymysql.connect(**db_config)
     cursor = connection.cursor()
 
-    # Drop existing tables
-    drop_tables(cursor)
-    connection.commit()
+    # # Drop existing tables
+    # drop_tables(cursor)
+    # connection.commit()
 
-    # Check and create tables
-    create_tables(cursor)
-    connection.commit()
+    # # Check and create tables
+    # create_tables(cursor)
+    # connection.commit()
 
-    with open(dataFile) as f:
-        test_data = json.load(f)
+    # with open(dataFile) as f:
+    #     test_data = json.load(f)
 
-    # Insert test data into tables
-    for table, data in test_data.items():
-        insert_data(cursor, table.capitalize(), data)
+    # # Insert test data into tables
+    # for table, data in test_data.items():
+    #     insert_data(cursor, table.capitalize(), data)
     
-    connection.commit()
-    cursor.close()
-    connection.close()
-    print('Test data inserted successfully.')
+    # connection.commit()
+    # cursor.close()
+    # connection.close()
+    # print('Test data inserted successfully.')
 
 # Utility function to get a database connection
 def get_db_connection():

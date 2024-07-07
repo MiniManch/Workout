@@ -71,8 +71,9 @@ export default {
   },
   methods: {
     async addSession() {
+      console.log('add')
       try {
-        const response = await fetch(`api/session/coach/${this.coach.id}`, {
+        const response = await fetch(`/api/session/coach/${this.coach.id}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

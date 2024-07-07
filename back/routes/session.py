@@ -25,7 +25,6 @@ def get_sessions_by_coach(coach_id):
         
         cursor.close()
         db.close()
-        print(sessions)
         if sessions:
             for session in sessions:
                 session['Duration'] = str(session['Duration'])
@@ -178,7 +177,7 @@ def get_client_sessions(client_id):
                 session['Duration'] = str(session['Duration'])
             return json.dumps({'sessions': sessions}, indent=4, sort_keys=True, default=str), 200
         else:
-            return json.dumps({'message': 'No sessions found for this client'}, indent=4, sort_keys=True, default=str), 404
+            return json.dumps({'message': 'No sessions found for this client','sessions':[]}, indent=4, sort_keys=True, default=str), 404
 
     except Exception as e:
         print(str(e))

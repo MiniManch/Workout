@@ -22,14 +22,14 @@
       <h2>Client Sessions</h2>
       <ul>
         <li v-for="session in sortedSessions" :key="session.id" class="session">
-          <div class="">
-          {{ formatDate(session.Date) }} - {{ session.StartTime.substring(0, session.StartTime. length - 3)  }} {{ session.SessionName }}, {{ session.Duration }} Minutes
+          <div>
+            {{ formatDate(session.Date) }} - {{ session.StartTime.substring(0, session.StartTime.length - 3) }} {{ session.SessionName }}, {{ session.Duration }} Minutes
           </div>
           <button class="btn btn-warning" @click="confirmAction(session.SessionID)">Delete</button>
         </li>
       </ul>
     </div>
-    <PopUpModal v-if="showModal" :type="modalType" :message="modalMessage" @close="handleModalClose"/>
+    <PopUpModal v-if="showModal" :type="modalType" :message="message" @close="handleModalClose"/>
     <YesOrNoModal v-if="showYesNoModal" @close="handleYesNoModalClose" @yes="performAction" />
   </div>
 </template>
@@ -39,7 +39,6 @@ import PopUpModal from '../General/PopUpModal.vue';
 import YesOrNoModal from '@/components/General/YesOrNoModal.vue';
 import AnimatedButton from '@/components/General/buttons/AnimatedButton.vue';
 
-
 export default {
   components: {
     PopUpModal,
@@ -48,7 +47,7 @@ export default {
   },
   data() {
     return {
-      coach:JSON.parse(localStorage.getItem('coach')) || {},
+      coach: JSON.parse(localStorage.getItem('coach')) || {},
       newClient: {
         name: '',
         email: '',
@@ -57,10 +56,10 @@ export default {
       message: '',
       modalType: '',
       showModal: false,
-      showYesNoModal:false,
+      showYesNoModal: false,
       clientId: this.$route.params.id || null,
       clientSessions: [],
-      itemToDelete:''
+      itemToDelete: ''
     };
   },
   computed: {
@@ -104,14 +103,17 @@ export default {
       try {
         const response = await fetch(`/api/session/client/${clientId}`);
         const data = await response.json();
+
         if (response.ok) {
-          this.clientSessions = data.sessions;
-          console.log(data.sessions)
-        
+          if (Array.isArray(data.sessions)) {
+            this.clientSessions = data.sessions;
+          } else {
+            this.clientSessions = [];
+          }
+        } else if (response.status === 404 && Array.isArray(data.sessions) && data.sessions.length === 0) {
+          this.clientSessions = [];
         } else {
-          this.message = data.error || 'Failed to fetch client sessions';
-          this.modalType = 'error';
-          this.showModal = true;
+          throw new Error(data.error || 'Failed to fetch client sessions');
         }
       } catch (error) {
         this.message = 'An error occurred: ' + error.message;
@@ -154,14 +156,14 @@ export default {
 
         const data = await response.json();
         this.modalType = response.ok ? 'success' : 'error';
-        this.modalMessage = data.message || `Failed to delete Session`;
+        this.modalMessage = data.message || 'Failed to delete Session';
         if (response.ok) {
-          this.clientSessions = this.clientSessions.filter(session => session.id !== itemId);
+          await this.fetchClientSessions(this.clientId);
         }
         this.showModal = true;
       } catch (error) {
         this.modalType = 'error';
-        this.modalMessage = `An error occurred: ${error.message}`;
+        this.modalMessage = 'An error occurred: ' + error.message;
         this.showModal = true;
       }
     },
@@ -211,7 +213,7 @@ export default {
       await this.deleteSession({ itemId: this.itemToDelete });
       this.showYesNoModal = false;
       this.itemToDelete = null;
-      this.modalMessage = `Session was deleted.`;
+      this.modalMessage = 'Session was deleted.';
       this.modalType = 'success';
       this.showModal = true;
     },
